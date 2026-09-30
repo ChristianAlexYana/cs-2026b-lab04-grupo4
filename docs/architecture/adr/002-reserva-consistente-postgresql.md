@@ -2,7 +2,7 @@
 
 - Estado: Aceptado
 - Fecha: 2026-09-30
-- Decisores: [AJUSTAR: nombres de los 3 integrantes]
+- Decisores: Yana Huanca Christian Alexander, Estrada Arce Sergio Emilio y Mamani Quispe Renzo Geomar
 
 ## Contexto
 Ninguna cita puede asignarse dos veces (QA-02) y hasta 5000 pacientes compiten por cupos entre las 7:00 y las 7:15 a. m. (QA-01). Se manejan datos de salud sujetos a la Ley 29733 (R-04) y el presupuesto permite un solo servidor (R-03). El equipo domina PostgreSQL y MySQL (R-02). Requisitos: RF-02, RF-03, RF-06.

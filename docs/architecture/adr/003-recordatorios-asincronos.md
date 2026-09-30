@@ -2,7 +2,7 @@
 
 - Estado: Aceptado
 - Fecha: 2026-09-30
-- Decisores: [AJUSTAR: nombres de los 3 integrantes]
+- Decisores: Yana Huanca Christian Alexander, Estrada Arce Sergio Emilio y Mamani Quispe Renzo Geomar
 
 ## Contexto
 Los recordatorios por WhatsApp son obligatorios (R-05, RF-04), pero la API externa puede responder lento o fallar, y eso no debe demorar ni impedir la reserva (QA-01). El módulo Notificaciones debe permitir agregar otros canales con poco esfuerzo (modificabilidad).

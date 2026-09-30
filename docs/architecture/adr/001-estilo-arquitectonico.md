@@ -2,7 +2,7 @@
 
 - Estado: Aceptado
 - Fecha: 2026-09-30
-- Decisores: [AJUSTAR: nombres de los 3 integrantes]
+- Decisores: Yana Huanca Christian Alexander, Estrada Arce Sergio Emilio y Mamani Quispe Renzo Geomar
 
 ## Contexto
 El MVP debe salir en 1 mes (R-01) con 3 developers (R-02) y un único VPS (R-03). El atributo crítico es la disponibilidad y el rendimiento en el pico de 5000 pacientes entre 7:00 y 7:15 a. m. (QA-01), sin asignar nunca una cita dos veces (QA-02). Se prevén nuevos canales de recordatorio y reglas por centro de salud (modificabilidad). Requisitos cubiertos: RF-01 a RF-07.

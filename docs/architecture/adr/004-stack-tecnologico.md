@@ -2,7 +2,7 @@
 
 - Estado: Aceptado
 - Fecha: 2026-09-30
-- Decisores: [AJUSTAR: nombres de los 3 integrantes]
+- Decisores: Yana Huanca Christian Alexander, Estrada Arce Sergio Emilio y Mamani Quispe Renzo Geomar
 
 ## Contexto
 El MVP debe salir en 1 mes (R-01) con 3 developers que dominan Python/Django, PostgreSQL, MySQL, Node.js, React, Vue.js, Java y C/C++ (R-02), con un solo servidor de bajo costo (R-03). El monolito modular (ADR-001) necesita módulos separados; la reserva usa transacciones en PostgreSQL (ADR-002) y los recordatorios una cola Celery + Redis (ADR-003). El personal de admisión debe administrar cupos (RF-06), los roles deben restringir el acceso a datos de salud (RF-07, QA-03) y el rendimiento en el pico de 7:00 a. m. es crítico (QA-01).
