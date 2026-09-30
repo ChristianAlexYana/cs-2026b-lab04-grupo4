@@ -1,0 +1,28 @@
+flowchart TB
+    PA["Paciente<br/>(web / PWA)"]
+    AD["Personal de admisión"]
+    ME["Médico"]
+    subgraph APP["CitaSalud — Monolito modular (un solo despliegue)"]
+        API["Capa de presentación: API REST + PWA"]
+        M1["Disponibilidad<br/>y cupos"]
+        M2["Reservas"]
+        M3["Agenda médica"]
+        M4["Notificaciones"]
+        M5["Identidad<br/>y acceso"]
+        INF["Capa de infraestructura: repositorios y adaptadores externos"]
+    end
+    DB[("PostgreSQL<br/>(un esquema por módulo)")]
+    RD[("Redis<br/>cola de tareas")]
+    WA["WhatsApp Business API"]
+    PA & AD & ME --> API
+    API --> M1 & M2 & M3 & M4 & M5
+    M1 & M2 & M3 & M4 & M5 --> INF
+    INF --> DB
+    INF --> RD
+    INF --> WA
+    classDef mod fill:#E8F5E9,stroke:#2E7D32,color:#000
+    classDef ext fill:#F2F2F2,stroke:#7F7F7F,color:#000,stroke-dasharray: 4 3
+    classDef usr fill:#FDEDEC,stroke:#C8310E,color:#000
+    class M1,M2,M3,M4,M5 mod
+    class WA ext
+    class PA,AD,ME usr
