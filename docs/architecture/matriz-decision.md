@@ -31,7 +31,7 @@ Total ponderado = Σ (peso × puntaje). Ejemplo B: 0,25×4 + 0,20×5 + 0,20×4 +
 Justificación de puntajes clave: en A y B la reserva ocurre en una sola transacción de PostgreSQL (integridad = 5); en C la reserva cruza servicios y requiere consistencia eventual (integridad = 2); C exige 5 despliegues, varias BD y un broker para 3 developers (simplicidad = 1).
 
 ## Análisis de sensibilidad
-La diferencia entre B (4,20) y A (4,10) es pequeña. B gana por modificabilidad (20 %); si ese peso bajara a 10 % y el de simplicidad subiera a 25 %, A pasaría a ganar. Por eso el equipo debe defender el peso de modificabilidad con el driver del atributo 4, no ajustarlo para obtener un resultado. **[El equipo debe confirmar o cambiar estos pesos y puntajes según su propio criterio.]**
+La diferencia entre B (4,20) y A (4,10) es pequeña. La alternativa B gana principalmente por la modificabilidad (20 %); si ese peso bajara a 10 % y el de simplicidad operativa subiera a 25 %, la alternativa A pasaría a ganar. Sin embargo, el equipo mantiene estos pesos porque la necesidad de integrar nuevos canales de comunicación y reglas por centro de salud (Atributo 4) es fundamental para la evolución del MVP, justificando el ligero esfuerzo extra de estructurar módulos independientes.
 
 ## Conclusión
 Elegimos **B. Monolito modular** porque cumple el plazo de 1 mes (R-01), garantiza la integridad de las citas con transacciones de una sola BD (QA-02) y deja los módulos separados para agregar canales sin tocar el resto. Ver [ADR-001](adr/001-estilo-arquitectonico.md).
