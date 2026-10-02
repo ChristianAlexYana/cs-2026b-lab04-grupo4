@@ -70,4 +70,4 @@ Vista de despliegue (Python Diagrams) y alternativa descartada (PlantUML):
 Para regenerar la vista de despliegue: `pip install diagrams`, instalar Graphviz y ejecutar `python docs/architecture/diagramas/despliegue.py`.
 
 ## Reflexión sobre el uso de la IA (5–8 líneas)
-[COMPLETAR con palabras del grupo: ¿en qué ayudó la IA? ¿qué errores cometió? ¿qué aprendimos a verificar?]
+La IA fue una herramienta excelente para acelerar la redacción de los ADRs y estructurar la sintaxis compleja de los diagramas como código (Mermaid y PlantUML). Sin embargo, cometió errores de contexto al ignorar nuestras restricciones operativas, sugiriendo inicialmente una arquitectura de microservicios inmanejable para un equipo de 3 personas en un mes. También asumió configuraciones de infraestructura (Prometheus, Grafana) que no habíamos decidido. Aprendimos que la IA es útil para proponer y estructurar, pero las decisiones finales, los cálculos de la matriz y la validación de capacidades técnicas (como los índices parciales en bases de datos) requieren un riguroso criterio y verificación humana mediante documentación oficial.
