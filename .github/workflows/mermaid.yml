@@ -1,0 +1,39 @@
+name: Mermaid CLI Auto-Generate
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'docs/architecture/diagramas/*.mmd'
+
+permissions:
+  contents: write
+
+jobs:
+  mermaid:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Mermaid CLI
+        run: npm install -g @mermaid-js/mermaid-cli
+
+      - name: Generar PNG
+        run: |
+          mmdc -i docs/architecture/diagramas/arquitectura.mmd -o docs/architecture/diagramas/img/arquitectura.png -b white
+          
+      - name: Hacer commit y push de la imagen generada
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/architecture/diagramas/img/arquitectura.png
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-generar imagen arquitectura.png desde Mermaid"
+          git push
