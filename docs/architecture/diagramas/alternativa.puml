@@ -11,8 +11,8 @@ node "Servidor (VPS)" {
     component "Lógica de negocio\n(citas, agenda, recordatorios)" as L
     component "Acceso a datos" as D
   }
+  database "PostgreSQL" as DB
 }
-database "PostgreSQL" as DB
 cloud "WhatsApp Business API" as W
 U --> P
 P --> L
