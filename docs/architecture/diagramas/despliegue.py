@@ -4,7 +4,7 @@ Ejecutar: python despliegue.py  -> genera img/despliegue.png
 """
 import os
 from diagrams import Diagram, Cluster, Edge
-from diagrams.onprem.client import Users, Client
+from diagrams.onprem.client import Client
 from diagrams.onprem.network import Nginx, Internet
 from diagrams.programming.framework import Django, React
 from diagrams.onprem.database import PostgreSQL
