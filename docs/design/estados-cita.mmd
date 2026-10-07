@@ -1,0 +1,14 @@
+stateDiagram-v2
+    [*] --> RESERVADA : crear()
+    RESERVADA --> CONFIRMADA : confirmar() [paciente confirma asistencia]
+    RESERVADA --> CANCELADA : cancelar() [antes de la hora de la cita]
+    CONFIRMADA --> CANCELADA : cancelar() [antes de la hora de la cita]
+    CONFIRMADA --> ATENDIDA : atender() [médico registra la atención]
+    CONFIRMADA --> NO_ASISTIO : marcarNoAsistio() [hora vencida sin atención]
+    RESERVADA --> NO_ASISTIO : marcarNoAsistio() [hora vencida sin atención]
+    ATENDIDA --> [*]
+    NO_ASISTIO --> [*]
+    CANCELADA --> [*]
+    note right of CANCELADA
+        Al entrar: Cupo.liberar()
+    end note
