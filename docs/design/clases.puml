@@ -1,0 +1,115 @@
+@startuml clases-reservas
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #EEF2F8
+skinparam classBorderColor #1A3A5C
+skinparam packageStyle rectangle
+skinparam nodesep 30
+skinparam ranksep 45
+title CitaSalud Arequipa — Reservas y Disponibilidad (diseño detallado, HU-02)
+
+' Paquetes = módulos del ADR-001 (ver paquetes.puml)
+package "Identidad y acceso" {
+  class Paciente {
+    - id: UUID
+    - nombre: String
+    - celular: String
+  }
+}
+
+package "Agenda médica" {
+  class CentroSalud {
+    - id: UUID
+    - nombre: String
+    - distrito: String
+  }
+  class Medico {
+    - id: UUID
+    - nombre: String
+    - especialidad: String
+  }
+}
+
+package "Disponibilidad y cupos" {
+  class Cupo {
+    - id: UUID
+    - fechaHora: DateTime
+    - ocupado: bool
+    + estaDisponible(): bool
+    + ocupar(): void
+    + liberar(): void
+  }
+  class ServicioDisponibilidad <<servicio>> {
+    + buscarAlternativos(cupo: Cupo): List<Cupo>
+  }
+  interface RepositorioCupos <<puerto>> {
+    + buscarPorId(id: UUID): Cupo
+    + buscarDisponibles(especialidad: String, centroId: UUID): List<Cupo>
+    + guardar(cupo: Cupo): void
+  }
+}
+
+package "Reservas" {
+  enum EstadoCita {
+    RESERVADA
+    CONFIRMADA
+    ATENDIDA
+    NO_ASISTIO
+    CANCELADA
+  }
+  class Cita {
+    - id: UUID
+    - fechaRegistro: DateTime
+    - estado: EstadoCita
+    - motivoCancelacion: String
+    + {static} crear(paciente: Paciente, cupo: Cupo): Cita
+    + confirmar(): void
+    + atender(): void
+    + marcarNoAsistio(): void
+    + cancelar(motivo: String): void
+    + estaActiva(): bool
+  }
+  class ServicioReservas <<servicio>> {
+    + reservarCita(pacienteId: UUID, cupoId: UUID): Cita
+    + cancelarCita(citaId: UUID, motivo: String): void
+  }
+  interface RepositorioCitas <<puerto>> {
+    + buscarPorId(id: UUID): Cita
+    + guardar(cita: Cita): void
+  }
+}
+
+package "Notificaciones" {
+  interface Notificador <<puerto>> {
+    + programarRecordatorio(cita: Cita): void
+  }
+  class WhatsAppAdapter <<adaptador>> {
+    + programarRecordatorio(cita: Cita): void
+  }
+}
+
+' --- Relaciones estructurales (multiplicidad en ambos extremos, regla C3) ---
+Paciente "1" -- "0..*" Cita : solicita >
+Cupo "1" -- "0..*" Cita : reserva >
+CentroSalud "1" o-- "1..*" Medico : agrupa >
+Medico "1" *-- "0..*" Cupo : agenda >
+Cita "1" --> "1" EstadoCita
+
+' --- Realización de puertos (ADR-001: puertos y adaptadores) ---
+Notificador <|.. WhatsAppAdapter
+
+' --- Dependencias de los servicios de aplicación ---
+ServicioReservas ..> Cita
+ServicioReservas ..> RepositorioCitas
+ServicioReservas ..> RepositorioCupos
+ServicioReservas ..> Notificador
+ServicioReservas ..> ServicioDisponibilidad
+ServicioDisponibilidad ..> RepositorioCupos
+
+note bottom of Cita
+  Regla de negocio (ADR-002): como máximo una cita
+  activa (RESERVADA o CONFIRMADA) por cupo.
+  La garantiza PostgreSQL con un índice único parcial.
+end note
+@enduml
