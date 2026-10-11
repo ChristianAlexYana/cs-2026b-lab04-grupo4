@@ -1,0 +1,18 @@
+@startuml packages_reservas
+set namespaceSeparator none
+package "reservas" as reservas {
+}
+package "reservas.adaptadores" as reservas.adaptadores {
+}
+package "reservas.dominio" as reservas.dominio {
+}
+package "reservas.puertos" as reservas.puertos {
+}
+package "reservas.servicios" as reservas.servicios {
+}
+reservas.adaptadores --> reservas.dominio
+reservas.adaptadores --> reservas.puertos
+reservas.puertos --> reservas.dominio
+reservas.servicios --> reservas.dominio
+reservas.servicios --> reservas.puertos
+@enduml

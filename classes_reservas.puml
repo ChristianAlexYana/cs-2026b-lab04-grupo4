@@ -1,0 +1,65 @@
+@startuml classes_reservas
+set namespaceSeparator none
+class "CentroSalud" as reservas.dominio.CentroSalud {
+  distrito : str
+  id : UUID
+  nombre : str
+}
+class "Cita" as reservas.dominio.Cita {
+  estado
+  fecha_registro : datetime
+  id : UUID
+  motivo_cancelacion : str | None
+  atender() -> None
+  cancelar(motivo: str) -> None
+  confirmar() -> None
+  crear(paciente: Paciente, cupo: Cupo) -> Cita
+  esta_activa() -> bool
+  marcar_no_asistio() -> None
+}
+class "Cupo" as reservas.dominio.Cupo {
+  fecha_hora : datetime
+  id : UUID
+  ocupado : bool
+  esta_disponible() -> bool
+  liberar() -> None
+  ocupar() -> None
+}
+class "EstadoCita" as reservas.dominio.EstadoCita {
+  name
+}
+class "Medico" as reservas.dominio.Medico {
+  especialidad : str
+  id : UUID
+  nombre : str
+}
+class "Notificador" as reservas.puertos.Notificador {
+  {abstract}programar_recordatorio(cita: Cita) -> None
+}
+class "Paciente" as reservas.dominio.Paciente {
+  celular : str
+  id : UUID
+  nombre : str
+}
+class "RepositorioCitas" as reservas.puertos.RepositorioCitas {
+  {abstract}buscar_por_id(id: UUID) -> Cita
+  {abstract}guardar(cita: Cita) -> None
+}
+class "RepositorioCupos" as reservas.puertos.RepositorioCupos {
+  {abstract}buscar_disponibles(especialidad: str, centro_id: UUID) -> list[Cupo]
+  {abstract}buscar_por_id(id: UUID) -> Cupo
+  {abstract}guardar(cupo: Cupo) -> None
+}
+class "ServicioDisponibilidad" as reservas.servicios.ServicioDisponibilidad {
+  {abstract}buscar_alternativos(cupo: Cupo) -> list[Cupo]
+}
+class "ServicioReservas" as reservas.servicios.ServicioReservas {
+  {abstract}cancelar_cita(cita_id: UUID, motivo: str) -> None
+  {abstract}reservar_cita(paciente_id: UUID, cupo_id: UUID) -> Cita
+}
+class "WhatsAppAdapter" as reservas.adaptadores.WhatsAppAdapter {
+  {abstract}programar_recordatorio(cita: Cita) -> None
+}
+reservas.adaptadores.WhatsAppAdapter --|> reservas.puertos.Notificador
+reservas.dominio.Cita --> reservas.dominio.EstadoCita : estado
+@enduml
