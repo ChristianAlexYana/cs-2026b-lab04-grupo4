@@ -1,0 +1,50 @@
+@startuml actividades-atencion-dia
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ActivityBackgroundColor #EEF2F8
+skinparam ActivityBorderColor #1A3A5C
+skinparam swimlaneTitleFontStyle bold
+title CitaSalud Arequipa — Atención del día (admisión, médico y paciente)
+
+' Solo usa estados y operaciones de clases.puml / estados-cita.mmd.
+' Supuesto: al registrar la llegada, admisión confirma la asistencia (Cita.confirmar()),
+' porque atender() solo es válido desde CONFIRMADA (estados-cita.mmd).
+
+|Paciente|
+start
+:Llega al centro de salud;
+|Personal de admisión|
+:Busca la cita del paciente
+(Cita.estaActiva());
+if (¿Tiene cita activa?) then (sí)
+else (no)
+  if (¿Hay un cupo disponible hoy?) then (sí)
+    :Registra la cita en mostrador (RF-06)
+    Cupo.ocupar() + Cita.crear() → RESERVADA;
+  else (no)
+    |Paciente|
+    :Recibe cupos alternativos
+    (ServicioDisponibilidad.buscarAlternativos());
+    stop
+  endif
+endif
+|Personal de admisión|
+fork
+  :Registra la llegada y confirma la asistencia
+  Cita.confirmar() → CONFIRMADA;
+fork again
+  |Médico|
+  :Revisa la lista de pacientes del día (RF-05);
+end fork
+|Médico|
+if (¿El paciente se presentó al consultorio?) then (sí)
+  |Paciente|
+  :Pasa a consulta;
+  |Médico|
+  :Atiende y registra la atención
+  Cita.atender() → ATENDIDA;
+else (no, hora vencida)
+  :Cita.marcarNoAsistio() → NO_ASISTIO;
+endif
+stop
+@enduml
