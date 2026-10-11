@@ -16,9 +16,6 @@ package "Identidad y acceso" {
     - nombre: String
     - celular: String
   }
-  interface RepositorioPacientes <<puerto>> {
-    + buscarPorId(id: UUID): Paciente
-  }
 }
 
 package "Agenda médica" {
@@ -81,12 +78,13 @@ package "Reservas" {
     + buscarPorId(id: UUID): Cita
     + guardar(cita: Cita): void
   }
-}
-
-package "Notificaciones" {
+  ' ADR-005: el puerto vive en Reservas (quien lo consume lo define)
   interface Notificador <<puerto>> {
     + programarRecordatorio(cita: Cita): void
   }
+}
+
+package "Notificaciones" {
   class WhatsAppAdapter <<adaptador>> {
     + programarRecordatorio(cita: Cita): void
   }
@@ -109,7 +107,6 @@ ServicioReservas ..> RepositorioCupos
 ServicioReservas ..> Notificador
 ServicioReservas ..> ServicioDisponibilidad
 ServicioDisponibilidad ..> RepositorioCupos
-ServicioReservas ..> RepositorioPacientes
 
 note bottom of Cita
   Regla de negocio (ADR-002): como máximo una cita

@@ -1,0 +1,40 @@
+@startuml paquetes
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam packageStyle rectangle
+skinparam packageBackgroundColor #EEF2F8
+skinparam packageBorderColor #1A3A5C
+skinparam nodesep 60
+skinparam ranksep 70
+title CitaSalud Arequipa — Paquetes (módulos del ADR-001, sin ciclos)
+
+package "Notificaciones" as NOT {
+  note "WhatsAppAdapter" as n1
+}
+package "Reservas" as RES {
+  note "Cita, EstadoCita, ServicioReservas,\nRepositorioCitas, Notificador (puerto)" as n2
+}
+package "Identidad y acceso" as IDA {
+  note "Paciente" as n3
+}
+package "Disponibilidad y cupos" as DIS {
+  note "Cupo, ServicioDisponibilidad,\nRepositorioCupos (puerto)" as n4
+}
+package "Agenda médica" as AGE {
+  note "CentroSalud, Medico" as n5
+}
+
+NOT ..> RES : implementa el puerto Notificador\n(recibe Cita)
+RES ..> DIS : usa Cupo, RepositorioCupos,\nServicioDisponibilidad
+RES ..> IDA : usa Paciente
+AGE ..> DIS : agenda Cupo\n(composición Medico–Cupo)
+
+note bottom of DIS
+  Regla de dependencias (ADR-001, ADR-005):
+  • Los módulos se comunican solo por interfaces públicas.
+  • Las flechas apuntan hacia el módulo que define el puerto
+    o el servicio usado; no se permiten ciclos.
+  • Las integraciones externas (WhatsApp) son adaptadores
+    que dependen del núcleo, nunca al revés.
+end note
+@enduml
