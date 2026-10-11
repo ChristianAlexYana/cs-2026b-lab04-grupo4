@@ -16,6 +16,9 @@ package "Identidad y acceso" {
     - nombre: String
     - celular: String
   }
+  interface RepositorioPacientes <<puerto>> {
+    + buscarPorId(id: UUID): Paciente
+  }
 }
 
 package "Agenda médica" {
@@ -106,6 +109,7 @@ ServicioReservas ..> RepositorioCupos
 ServicioReservas ..> Notificador
 ServicioReservas ..> ServicioDisponibilidad
 ServicioDisponibilidad ..> RepositorioCupos
+ServicioReservas ..> RepositorioPacientes
 
 note bottom of Cita
   Regla de negocio (ADR-002): como máximo una cita

@@ -1,0 +1,45 @@
+@startuml secuencia-reservar-cita
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign center
+autonumber
+
+actor Paciente
+participant "PWA" as UI
+participant "ReservaController" as C
+participant "ServicioReservas" as S
+participant "RepositorioPacientes" as RP
+participant "RepositorioCupos" as RC
+participant "Cupo" as CU
+participant "Cita" as CI
+participant "RepositorioCitas" as RCI
+participant "ServicioDisponibilidad" as SD
+participant "Notificador\n(WhatsAppAdapter)" as N
+
+Paciente -> UI : Elige cupo y reserva
+UI -> C : POST /citas
+C -> S : reservarCita(pacienteId, cupoId)
+S -> RP : buscarPorId(pacienteId)
+RP --> S : paciente
+S -> RC : buscarPorId(cupoId)
+RC --> S : cupo
+S -> CU : estaDisponible()
+CU --> S : true/false
+
+alt cupo disponible
+    S -> CU : ocupar()
+    S -> CI ** : crear(paciente, cupo)
+    S -> RCI : guardar(cita)
+    S ->> N : programarRecordatorio(cita)
+    note right: asíncrono\n(no bloquea la respuesta)
+    S --> C : 201 cita RESERVADA
+    C --> UI : Muestra confirmación
+else cupo ocupado
+    S -> SD : buscarAlternativos(cupo)
+    opt si hay alternativos
+        SD --> S : listaAlternativos
+    end
+    S --> C : 409 cupo ocupado
+    C --> UI : Muestra alternativos
+end
+@enduml
