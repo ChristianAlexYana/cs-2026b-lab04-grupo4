@@ -93,6 +93,7 @@ stateDiagram-v2
     note right of CANCELADA
         Al entrar: Cupo.liberar()
     end note
+```
 
 ### Diagramas y entregables (Lab 05)
 
