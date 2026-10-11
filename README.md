@@ -71,3 +71,47 @@ Para regenerar la vista de despliegue: `pip install diagrams`, instalar Graphviz
 
 ## Reflexión sobre el uso de la IA
 La IA fue una herramienta excelente para acelerar la redacción de los ADRs y estructurar la sintaxis compleja de los diagramas como código (Mermaid y PlantUML). Sin embargo, cometió errores de contexto al ignorar nuestras restricciones operativas, sugiriendo inicialmente una arquitectura de microservicios inmanejable para un equipo de 3 personas en un mes. También asumió configuraciones de infraestructura (Prometheus, Grafana) que no habíamos decidido. Aprendimos que la IA es útil para proponer y estructurar, pero las decisiones finales, los cálculos de la matriz y la validación de capacidades técnicas (como los índices parciales en bases de datos) requieren un riguroso criterio y verificación humana mediante documentación oficial.
+
+## Diseño UML (Lab 05)
+
+Laboratorio 05 — *UML como código* (Construcción de Software, EPIS-UNSA, 2026-B). Diseño detallado de los módulos **Reservas** y **Disponibilidad y cupos** de CitaSalud Arequipa para la historia crítica **HU-02: reservar una cita** ([historia.md](docs/design/historia.md)), coherente con el [ADR-001](docs/architecture/adr/001-estilo-arquitectonico.md) (monolito modular con puertos y adaptadores).
+
+### Máquina de estados de la cita (Mermaid)
+
+```mermaid
+stateDiagram-v2
+    [*] --> RESERVADA : crear()
+    RESERVADA --> CONFIRMADA : confirmar() [paciente confirma asistencia]
+    RESERVADA --> CANCELADA : cancelar() [antes de la hora de la cita]
+    CONFIRMADA --> CANCELADA : cancelar() [antes de la hora de la cita]
+    CONFIRMADA --> ATENDIDA : atender() [médico registra la atención]
+    CONFIRMADA --> NO_ASISTIO : marcarNoAsistio() [hora vencida sin atención]
+    RESERVADA --> NO_ASISTIO : marcarNoAsistio() [hora vencida sin atención]
+    ATENDIDA --> [*]
+    NO_ASISTIO --> [*]
+    CANCELADA --> [*]
+    note right of CANCELADA
+        Al entrar: Cupo.liberar()
+    end note
+
+### Diagramas y entregables (Lab 05)
+
+| Entregable | Código fuente | Imagen |
+|---|---|---|
+| E1 Historia y diagrama de clases | [historia.md](docs/design/historia.md), [clases.puml](docs/design/clases.puml) | ![Clases](docs/design/img/clases-reservas.png) |
+| E2 Diagrama de secuencia | [secuencia-reservar-cita.puml](docs/design/secuencia-reservar-cita.puml) | ![Secuencia](docs/design/img/secuencia-reservar-cita.png) |
+| E3 Máquina de estados | [estados-cita.mmd](docs/design/estados-cita.mmd) | ![Estados](docs/design/img/estados-cita.png) |
+| E4 Diagrama de actividades | [actividades-atencion-dia.puml](docs/design/actividades-atencion-dia.puml) | ![Actividades](docs/design/img/actividades-atencion-dia.png) |
+| E5 Diagrama de paquetes | [paquetes.puml](docs/design/paquetes.puml) | ![Paquetes](docs/design/img/paquetes.png) |
+| E6 Round-trip | [round-trip.md](docs/design/round-trip.md), [src/reservas/](src/reservas/) | ![Round-Trip](docs/design/img/classes_reservas.png) |
+| E7 Consistencia y bitácora de IA | [consistencia.md](docs/design/consistencia.md), [bitacora-ia.md](docs/design/bitacora-ia.md) | — |
+
+### Aportes del equipo (Lab 05)
+
+| Integrante | Entregables |
+|---|---|
+| Estrada Arce Sergio Emilio | E1 (historia y clases), E3 (estados), ajuste del ADR-002 |
+| Mamani Quispe Renzo Geomar | E2 (secuencia), E7 (consistencia y bitácora), README |
+| Yana Huanca Christian Alexander | E4 (actividades), E5 (paquetes), E6 (round-trip), etiqueta de entrega |
+
+Etiqueta de entrega: `v0.5-diseno`.
