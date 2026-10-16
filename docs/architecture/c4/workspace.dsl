@@ -9,7 +9,15 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
 
         citasalud = softwareSystem "CitaSalud Arequipa" "Plataforma regional para consultar disponibilidad de cupos, reservar y cancelar citas médicas con recordatorios automatizados." {
             pwa = container "Aplicación web progresiva" "Interfaz web adaptable para pacientes, personal de admisión y médicos." "React + Service Worker" "Web Browser"
-            api = container "API CitaSalud" "Monolito modular que expone la lógica de negocio mediante una API REST." "Python / Django REST Framework"
+            
+            api = container "API CitaSalud" "Monolito modular que expone la lógica de negocio mediante una API REST." "Python / Django REST Framework" {
+                disponibilidad = component "Módulo Disponibilidad y cupos" "Gestiona los cupos de horarios, verifica disponibilidad y busca cupos alternativos." "Django app"
+                reservas = component "Módulo Reservas" "Orquesta la creación, confirmación, cancelación y ciclo de vida de las citas." "Django app"
+                agenda = component "Módulo Agenda médica" "Administra los centros de salud, médicos, especialidades y agendas diarias." "Django app"
+                notificaciones = component "Módulo Notificaciones" "Implementa el adaptador de mensajería para encolar recordatorios hacia WhatsApp." "Django app"
+                identidad = component "Módulo Identidad y acceso" "Gestiona la autenticación y el repositorio de pacientes y personal." "Django app"
+            }
+
             worker = container "Worker de recordatorios" "Procesa en segundo plano el envío de recordatorios y sus reintentos." "Celery"
             db = container "Base de datos" "Almacena pacientes, médicos, cupos y citas con aislamiento lógico por esquemas." "PostgreSQL 16" "Database"
             cola = container "Cola de tareas y caché" "Almacena las tareas asíncronas de notificación y caché de disponibilidad." "Redis" "Queue"
@@ -36,6 +44,25 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
         citasalud.api -> reniec "Valida identidad del paciente" "HTTPS/JSON"
         citasalud.worker -> citasalud.cola "Consume tareas de envío programadas" "Redis protocol"
         citasalud.worker -> whatsapp "Despacha mensajes de recordatorio" "HTTPS/JSON"
+
+        # Relaciones de Nivel 3 (Componentes de la API)
+        citasalud.pwa -> citasalud.api.disponibilidad "Consulta cupos disponibles por especialidad" "HTTPS/JSON"
+        citasalud.pwa -> citasalud.api.reservas "Solicita reservar o cancelar citas" "HTTPS/JSON"
+        citasalud.pwa -> citasalud.api.agenda "Consulta pacientes del día y administra agendas" "HTTPS/JSON"
+        citasalud.pwa -> citasalud.api.identidad "Autentica usuarios" "HTTPS/JSON"
+
+        citasalud.api.reservas -> citasalud.api.identidad "Obtiene datos del paciente (RepositorioPacientes)"
+        citasalud.api.reservas -> citasalud.api.disponibilidad "Verifica, ocupa o libera cupo y busca alternativos"
+        citasalud.api.reservas -> citasalud.api.notificaciones "Solicita programar recordatorio (puerto Notificador)"
+        citasalud.api.disponibilidad -> citasalud.api.agenda "Consulta médicos y centros de salud asociados"
+
+        citasalud.api.identidad -> reniec "Valida datos del DNI" "HTTPS/JSON"
+        citasalud.api.notificaciones -> citasalud.cola "Encola tarea de envío de WhatsApp" "Redis protocol"
+
+        citasalud.api.reservas -> citasalud.db "Lee y escribe citas (esquema reservas)" "SQL/TCP"
+        citasalud.api.disponibilidad -> citasalud.db "Lee y actualiza cupos (esquema disponibilidad)" "SQL/TCP"
+        citasalud.api.agenda -> citasalud.db "Lee y escribe médicos y centros (esquema agenda)" "SQL/TCP"
+        citasalud.api.identidad -> citasalud.db "Lee y escribe pacientes y usuarios (esquema identidad)" "SQL/TCP"
     }
 
     views {
@@ -45,6 +72,11 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
         }
 
         container citasalud "Contenedores" "Nivel 2: Contenedores que conforman CitaSalud Arequipa." {
+            include *
+            autolayout lr
+        }
+
+        component citasalud.api "Componentes" "Nivel 3: Componentes internos del contenedor API CitaSalud." {
             include *
             autolayout lr
         }
@@ -66,6 +98,10 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
             element "Container" {
                 background #438DD5
                 color #ffffff
+            }
+            element "Component" {
+                background #85BBF0
+                color #000000
             }
             element "Database" {
                 shape cylinder
