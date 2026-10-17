@@ -63,6 +63,19 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
         citasalud.api.disponibilidad -> citasalud.db "Lee y actualiza cupos (esquema disponibilidad)" "SQL/TCP"
         citasalud.api.agenda -> citasalud.db "Lee y escribe médicos y centros (esquema agenda)" "SQL/TCP"
         citasalud.api.identidad -> citasalud.db "Lee y escribe pacientes y usuarios (esquema identidad)" "SQL/TCP"
+
+        produccion = deploymentEnvironment "Producción" {
+            deploymentNode "Celular o PC del usuario" "" "Android / navegador web" {
+                containerInstance citasalud.pwa
+            }
+            deploymentNode "VPS en la nube" "" "Ubuntu 24.04 LTS, 2 vCPU, 4 GB RAM" {
+                infrastructureNode "Nginx" "Sirve la PWA estática y reenvía /api a Django (ADR-004)." "Nginx"
+                containerInstance citasalud.api
+                containerInstance citasalud.worker
+                containerInstance citasalud.db
+                containerInstance citasalud.cola
+            }
+        }
     }
 
     views {
@@ -80,7 +93,10 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
             include *
             autolayout lr
         }
-
+        deployment citasalud produccion "Despliegue" "Despliegue en producción (MVP)." {
+            include *
+            autolayout lr
+        }
 
         dynamic citasalud.api "ReservarCita" "Dinámico: reservar una cita verificando cupo y evitando doble asignación." {
             citasalud.pwa -> citasalud.api.reservas "Solicita reservar una cita"
