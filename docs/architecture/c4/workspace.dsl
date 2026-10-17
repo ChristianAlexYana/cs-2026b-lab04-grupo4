@@ -81,6 +81,17 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
             autolayout lr
         }
 
+
+        dynamic citasalud.api "ReservarCita" "Dinámico: reservar una cita verificando cupo y evitando doble asignación." {
+            citasalud.pwa -> citasalud.api.reservas "Solicita reservar una cita"
+            citasalud.api.reservas -> citasalud.api.identidad "Obtiene datos del paciente"
+            citasalud.api.reservas -> citasalud.api.disponibilidad "Verifica y ocupa el cupo"
+            citasalud.api.disponibilidad -> citasalud.db "Actualiza el cupo de forma atómica"
+            citasalud.api.reservas -> citasalud.db "Registra la cita"
+            citasalud.api.reservas -> citasalud.api.notificaciones "Solicita programar recordatorio"
+            citasalud.api.notificaciones -> citasalud.cola "Encola tarea de envío de WhatsApp"
+            autolayout lr
+        }
         styles {
             element "Person" {
                 shape person

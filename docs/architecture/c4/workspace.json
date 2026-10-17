@@ -1,0 +1,698 @@
+{
+  "configuration" : { },
+  "description" : "Modelo C4 del sistema de reserva de citas médicas en centros de salud de Arequipa",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedDate" : "2026-10-17T05:00:52Z",
+  "model" : {
+    "people" : [ {
+      "description" : "Ciudadano de Arequipa que busca disponibilidad por especialidad, reserva o cancela sus citas médicas.",
+      "id" : "1",
+      "name" : "Paciente",
+      "properties" : {
+        "structurizr.dsl.identifier" : "paciente"
+      },
+      "relationships" : [ {
+        "description" : "Consulta disponibilidad, reserva y cancela citas",
+        "destinationId" : "4",
+        "id" : "17",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Reserva y cancela citas desde su navegador",
+        "destinationId" : "5",
+        "id" : "22",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Personal del centro de salud que administra cupos y registra la asistencia en mostrador.",
+      "id" : "2",
+      "name" : "Personal de admisión",
+      "properties" : {
+        "structurizr.dsl.identifier" : "admision"
+      },
+      "relationships" : [ {
+        "description" : "Administra cupos de atención y recepciona pacientes",
+        "destinationId" : "4",
+        "id" : "18",
+        "sourceId" : "2",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Gestiona cupos y admisión del día",
+        "destinationId" : "5",
+        "id" : "23",
+        "sourceId" : "2",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Profesional de salud que consulta su agenda del día y registra la atención de los pacientes.",
+      "id" : "3",
+      "name" : "Médico",
+      "properties" : {
+        "structurizr.dsl.identifier" : "medico"
+      },
+      "relationships" : [ {
+        "description" : "Consulta la lista de pacientes del día y registra atenciones",
+        "destinationId" : "4",
+        "id" : "19",
+        "sourceId" : "3",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Consulta agenda diaria y registra atención",
+        "destinationId" : "5",
+        "id" : "24",
+        "sourceId" : "3",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "containers" : [ {
+        "description" : "Interfaz web adaptable para pacientes, personal de admisión y médicos.",
+        "documentation" : { },
+        "id" : "5",
+        "name" : "Aplicación web progresiva",
+        "properties" : {
+          "structurizr.dsl.identifier" : "citasalud.pwa"
+        },
+        "relationships" : [ {
+          "description" : "Realiza peticiones a la API",
+          "destinationId" : "6",
+          "id" : "25",
+          "sourceId" : "5",
+          "tags" : "Relationship",
+          "technology" : "HTTPS/JSON (REST)"
+        }, {
+          "description" : "Consulta cupos disponibles por especialidad",
+          "destinationId" : "7",
+          "id" : "31",
+          "sourceId" : "5",
+          "tags" : "Relationship",
+          "technology" : "HTTPS/JSON"
+        }, {
+          "description" : "Solicita reservar o cancelar citas",
+          "destinationId" : "8",
+          "id" : "32",
+          "sourceId" : "5",
+          "tags" : "Relationship",
+          "technology" : "HTTPS/JSON"
+        }, {
+          "description" : "Consulta pacientes del día y administra agendas",
+          "destinationId" : "9",
+          "id" : "33",
+          "sourceId" : "5",
+          "tags" : "Relationship",
+          "technology" : "HTTPS/JSON"
+        }, {
+          "description" : "Autentica usuarios",
+          "destinationId" : "11",
+          "id" : "34",
+          "sourceId" : "5",
+          "tags" : "Relationship",
+          "technology" : "HTTPS/JSON"
+        } ],
+        "tags" : "Element,Container,Web Browser",
+        "technology" : "React + Service Worker"
+      }, {
+        "components" : [ {
+          "description" : "Gestiona los cupos de horarios, verifica disponibilidad y busca cupos alternativos.",
+          "documentation" : { },
+          "id" : "7",
+          "name" : "Módulo Disponibilidad y cupos",
+          "properties" : {
+            "structurizr.dsl.identifier" : "citasalud.api.disponibilidad"
+          },
+          "relationships" : [ {
+            "description" : "Consulta médicos y centros de salud asociados",
+            "destinationId" : "9",
+            "id" : "38",
+            "sourceId" : "7",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Lee y actualiza cupos (esquema disponibilidad)",
+            "destinationId" : "13",
+            "id" : "42",
+            "sourceId" : "7",
+            "tags" : "Relationship",
+            "technology" : "SQL/TCP"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Django app"
+        }, {
+          "description" : "Orquesta la creación, confirmación, cancelación y ciclo de vida de las citas.",
+          "documentation" : { },
+          "id" : "8",
+          "name" : "Módulo Reservas",
+          "properties" : {
+            "structurizr.dsl.identifier" : "citasalud.api.reservas"
+          },
+          "relationships" : [ {
+            "description" : "Obtiene datos del paciente (RepositorioPacientes)",
+            "destinationId" : "11",
+            "id" : "35",
+            "sourceId" : "8",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Verifica, ocupa o libera cupo y busca alternativos",
+            "destinationId" : "7",
+            "id" : "36",
+            "sourceId" : "8",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Solicita programar recordatorio (puerto Notificador)",
+            "destinationId" : "10",
+            "id" : "37",
+            "sourceId" : "8",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Lee y escribe citas (esquema reservas)",
+            "destinationId" : "13",
+            "id" : "41",
+            "sourceId" : "8",
+            "tags" : "Relationship",
+            "technology" : "SQL/TCP"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Django app"
+        }, {
+          "description" : "Administra los centros de salud, médicos, especialidades y agendas diarias.",
+          "documentation" : { },
+          "id" : "9",
+          "name" : "Módulo Agenda médica",
+          "properties" : {
+            "structurizr.dsl.identifier" : "citasalud.api.agenda"
+          },
+          "relationships" : [ {
+            "description" : "Lee y escribe médicos y centros (esquema agenda)",
+            "destinationId" : "13",
+            "id" : "43",
+            "sourceId" : "9",
+            "tags" : "Relationship",
+            "technology" : "SQL/TCP"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Django app"
+        }, {
+          "description" : "Implementa el adaptador de mensajería para encolar recordatorios hacia WhatsApp.",
+          "documentation" : { },
+          "id" : "10",
+          "name" : "Módulo Notificaciones",
+          "properties" : {
+            "structurizr.dsl.identifier" : "citasalud.api.notificaciones"
+          },
+          "relationships" : [ {
+            "description" : "Encola tarea de envío de WhatsApp",
+            "destinationId" : "14",
+            "id" : "40",
+            "sourceId" : "10",
+            "tags" : "Relationship",
+            "technology" : "Redis protocol"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Django app"
+        }, {
+          "description" : "Gestiona la autenticación y el repositorio de pacientes y personal.",
+          "documentation" : { },
+          "id" : "11",
+          "name" : "Módulo Identidad y acceso",
+          "properties" : {
+            "structurizr.dsl.identifier" : "citasalud.api.identidad"
+          },
+          "relationships" : [ {
+            "description" : "Valida datos del DNI",
+            "destinationId" : "16",
+            "id" : "39",
+            "sourceId" : "11",
+            "tags" : "Relationship",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Lee y escribe pacientes y usuarios (esquema identidad)",
+            "destinationId" : "13",
+            "id" : "44",
+            "sourceId" : "11",
+            "tags" : "Relationship",
+            "technology" : "SQL/TCP"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Django app"
+        } ],
+        "description" : "Monolito modular que expone la lógica de negocio mediante una API REST.",
+        "documentation" : { },
+        "id" : "6",
+        "name" : "API CitaSalud",
+        "properties" : {
+          "structurizr.dsl.identifier" : "citasalud.api"
+        },
+        "relationships" : [ {
+          "description" : "Lee y escribe registros transaccionales",
+          "destinationId" : "13",
+          "id" : "26",
+          "sourceId" : "6",
+          "tags" : "Relationship",
+          "technology" : "SQL/TCP"
+        }, {
+          "description" : "Encola tareas de recordatorio y consulta caché",
+          "destinationId" : "14",
+          "id" : "27",
+          "sourceId" : "6",
+          "tags" : "Relationship",
+          "technology" : "Redis protocol"
+        }, {
+          "description" : "Valida identidad del paciente",
+          "destinationId" : "16",
+          "id" : "28",
+          "sourceId" : "6",
+          "tags" : "Relationship",
+          "technology" : "HTTPS/JSON"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "Python / Django REST Framework"
+      }, {
+        "description" : "Procesa en segundo plano el envío de recordatorios y sus reintentos.",
+        "documentation" : { },
+        "id" : "12",
+        "name" : "Worker de recordatorios",
+        "properties" : {
+          "structurizr.dsl.identifier" : "citasalud.worker"
+        },
+        "relationships" : [ {
+          "description" : "Consume tareas de envío programadas",
+          "destinationId" : "14",
+          "id" : "29",
+          "sourceId" : "12",
+          "tags" : "Relationship",
+          "technology" : "Redis protocol"
+        }, {
+          "description" : "Despacha mensajes de recordatorio",
+          "destinationId" : "15",
+          "id" : "30",
+          "sourceId" : "12",
+          "tags" : "Relationship",
+          "technology" : "HTTPS/JSON"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "Celery"
+      }, {
+        "description" : "Almacena pacientes, médicos, cupos y citas con aislamiento lógico por esquemas.",
+        "documentation" : { },
+        "id" : "13",
+        "name" : "Base de datos",
+        "properties" : {
+          "structurizr.dsl.identifier" : "citasalud.db"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "PostgreSQL 16"
+      }, {
+        "description" : "Almacena las tareas asíncronas de notificación y caché de disponibilidad.",
+        "documentation" : { },
+        "id" : "14",
+        "name" : "Cola de tareas y caché",
+        "properties" : {
+          "structurizr.dsl.identifier" : "citasalud.cola"
+        },
+        "tags" : "Element,Container,Queue",
+        "technology" : "Redis"
+      } ],
+      "description" : "Plataforma regional para consultar disponibilidad de cupos, reservar y cancelar citas médicas con recordatorios automatizados.",
+      "documentation" : { },
+      "id" : "4",
+      "name" : "CitaSalud Arequipa",
+      "properties" : {
+        "structurizr.dsl.identifier" : "citasalud"
+      },
+      "relationships" : [ {
+        "description" : "Envía recordatorios y avisos de citas",
+        "destinationId" : "15",
+        "id" : "20",
+        "sourceId" : "4",
+        "tags" : "Relationship",
+        "technology" : "HTTPS/JSON"
+      }, {
+        "description" : "Consulta datos básicos de identidad por DNI",
+        "destinationId" : "16",
+        "id" : "21",
+        "sourceId" : "4",
+        "tags" : "Relationship",
+        "technology" : "HTTPS/JSON"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "description" : "Servicio externo de mensajería para el envío de confirmaciones y recordatorios de citas.",
+      "documentation" : { },
+      "id" : "15",
+      "name" : "WhatsApp Business API",
+      "properties" : {
+        "structurizr.dsl.identifier" : "whatsapp"
+      },
+      "tags" : "Element,Software System,Externo"
+    }, {
+      "description" : "Servicio externo para validar los datos básicos de identificación del ciudadano.",
+      "documentation" : { },
+      "id" : "16",
+      "name" : "Servicio de consulta de DNI",
+      "properties" : {
+        "structurizr.dsl.identifier" : "reniec"
+      },
+      "tags" : "Element,Software System,Externo"
+    } ]
+  },
+  "name" : "CitaSalud Arequipa",
+  "properties" : {
+    "structurizr.inspection.error" : "10",
+    "structurizr.dsl" : "d29ya3NwYWNlICJDaXRhU2FsdWQgQXJlcXVpcGEiICJNb2RlbG8gQzQgZGVsIHNpc3RlbWEgZGUgcmVzZXJ2YSBkZSBjaXRhcyBtw6lkaWNhcyBlbiBjZW50cm9zIGRlIHNhbHVkIGRlIEFyZXF1aXBhIiB7CgogICAgIWlkZW50aWZpZXJzIGhpZXJhcmNoaWNhbAoKICAgIG1vZGVsIHsKICAgICAgICBwYWNpZW50ZSA9IHBlcnNvbiAiUGFjaWVudGUiICJDaXVkYWRhbm8gZGUgQXJlcXVpcGEgcXVlIGJ1c2NhIGRpc3BvbmliaWxpZGFkIHBvciBlc3BlY2lhbGlkYWQsIHJlc2VydmEgbyBjYW5jZWxhIHN1cyBjaXRhcyBtw6lkaWNhcy4iCiAgICAgICAgYWRtaXNpb24gPSBwZXJzb24gIlBlcnNvbmFsIGRlIGFkbWlzacOzbiIgIlBlcnNvbmFsIGRlbCBjZW50cm8gZGUgc2FsdWQgcXVlIGFkbWluaXN0cmEgY3Vwb3MgeSByZWdpc3RyYSBsYSBhc2lzdGVuY2lhIGVuIG1vc3RyYWRvci4iCiAgICAgICAgbWVkaWNvID0gcGVyc29uICJNw6lkaWNvIiAiUHJvZmVzaW9uYWwgZGUgc2FsdWQgcXVlIGNvbnN1bHRhIHN1IGFnZW5kYSBkZWwgZMOtYSB5IHJlZ2lzdHJhIGxhIGF0ZW5jacOzbiBkZSBsb3MgcGFjaWVudGVzLiIKCiAgICAgICAgY2l0YXNhbHVkID0gc29mdHdhcmVTeXN0ZW0gIkNpdGFTYWx1ZCBBcmVxdWlwYSIgIlBsYXRhZm9ybWEgcmVnaW9uYWwgcGFyYSBjb25zdWx0YXIgZGlzcG9uaWJpbGlkYWQgZGUgY3Vwb3MsIHJlc2VydmFyIHkgY2FuY2VsYXIgY2l0YXMgbcOpZGljYXMgY29uIHJlY29yZGF0b3Jpb3MgYXV0b21hdGl6YWRvcy4iIHsKICAgICAgICAgICAgcHdhID0gY29udGFpbmVyICJBcGxpY2FjacOzbiB3ZWIgcHJvZ3Jlc2l2YSIgIkludGVyZmF6IHdlYiBhZGFwdGFibGUgcGFyYSBwYWNpZW50ZXMsIHBlcnNvbmFsIGRlIGFkbWlzacOzbiB5IG3DqWRpY29zLiIgIlJlYWN0ICsgU2VydmljZSBXb3JrZXIiICJXZWIgQnJvd3NlciIKICAgICAgICAgICAgCiAgICAgICAgICAgIGFwaSA9IGNvbnRhaW5lciAiQVBJIENpdGFTYWx1ZCIgIk1vbm9saXRvIG1vZHVsYXIgcXVlIGV4cG9uZSBsYSBsw7NnaWNhIGRlIG5lZ29jaW8gbWVkaWFudGUgdW5hIEFQSSBSRVNULiIgIlB5dGhvbiAvIERqYW5nbyBSRVNUIEZyYW1ld29yayIgewogICAgICAgICAgICAgICAgZGlzcG9uaWJpbGlkYWQgPSBjb21wb25lbnQgIk3Ds2R1bG8gRGlzcG9uaWJpbGlkYWQgeSBjdXBvcyIgIkdlc3Rpb25hIGxvcyBjdXBvcyBkZSBob3JhcmlvcywgdmVyaWZpY2EgZGlzcG9uaWJpbGlkYWQgeSBidXNjYSBjdXBvcyBhbHRlcm5hdGl2b3MuIiAiRGphbmdvIGFwcCIKICAgICAgICAgICAgICAgIHJlc2VydmFzID0gY29tcG9uZW50ICJNw7NkdWxvIFJlc2VydmFzIiAiT3JxdWVzdGEgbGEgY3JlYWNpw7NuLCBjb25maXJtYWNpw7NuLCBjYW5jZWxhY2nDs24geSBjaWNsbyBkZSB2aWRhIGRlIGxhcyBjaXRhcy4iICJEamFuZ28gYXBwIgogICAgICAgICAgICAgICAgYWdlbmRhID0gY29tcG9uZW50ICJNw7NkdWxvIEFnZW5kYSBtw6lkaWNhIiAiQWRtaW5pc3RyYSBsb3MgY2VudHJvcyBkZSBzYWx1ZCwgbcOpZGljb3MsIGVzcGVjaWFsaWRhZGVzIHkgYWdlbmRhcyBkaWFyaWFzLiIgIkRqYW5nbyBhcHAiCiAgICAgICAgICAgICAgICBub3RpZmljYWNpb25lcyA9IGNvbXBvbmVudCAiTcOzZHVsbyBOb3RpZmljYWNpb25lcyIgIkltcGxlbWVudGEgZWwgYWRhcHRhZG9yIGRlIG1lbnNhamVyw61hIHBhcmEgZW5jb2xhciByZWNvcmRhdG9yaW9zIGhhY2lhIFdoYXRzQXBwLiIgIkRqYW5nbyBhcHAiCiAgICAgICAgICAgICAgICBpZGVudGlkYWQgPSBjb21wb25lbnQgIk3Ds2R1bG8gSWRlbnRpZGFkIHkgYWNjZXNvIiAiR2VzdGlvbmEgbGEgYXV0ZW50aWNhY2nDs24geSBlbCByZXBvc2l0b3JpbyBkZSBwYWNpZW50ZXMgeSBwZXJzb25hbC4iICJEamFuZ28gYXBwIgogICAgICAgICAgICB9CgogICAgICAgICAgICB3b3JrZXIgPSBjb250YWluZXIgIldvcmtlciBkZSByZWNvcmRhdG9yaW9zIiAiUHJvY2VzYSBlbiBzZWd1bmRvIHBsYW5vIGVsIGVudsOtbyBkZSByZWNvcmRhdG9yaW9zIHkgc3VzIHJlaW50ZW50b3MuIiAiQ2VsZXJ5IgogICAgICAgICAgICBkYiA9IGNvbnRhaW5lciAiQmFzZSBkZSBkYXRvcyIgIkFsbWFjZW5hIHBhY2llbnRlcywgbcOpZGljb3MsIGN1cG9zIHkgY2l0YXMgY29uIGFpc2xhbWllbnRvIGzDs2dpY28gcG9yIGVzcXVlbWFzLiIgIlBvc3RncmVTUUwgMTYiICJEYXRhYmFzZSIKICAgICAgICAgICAgY29sYSA9IGNvbnRhaW5lciAiQ29sYSBkZSB0YXJlYXMgeSBjYWNow6kiICJBbG1hY2VuYSBsYXMgdGFyZWFzIGFzw61uY3JvbmFzIGRlIG5vdGlmaWNhY2nDs24geSBjYWNow6kgZGUgZGlzcG9uaWJpbGlkYWQuIiAiUmVkaXMiICJRdWV1ZSIKICAgICAgICB9CgogICAgICAgIHdoYXRzYXBwID0gc29mdHdhcmVTeXN0ZW0gIldoYXRzQXBwIEJ1c2luZXNzIEFQSSIgIlNlcnZpY2lvIGV4dGVybm8gZGUgbWVuc2FqZXLDrWEgcGFyYSBlbCBlbnbDrW8gZGUgY29uZmlybWFjaW9uZXMgeSByZWNvcmRhdG9yaW9zIGRlIGNpdGFzLiIgIkV4dGVybm8iCiAgICAgICAgcmVuaWVjID0gc29mdHdhcmVTeXN0ZW0gIlNlcnZpY2lvIGRlIGNvbnN1bHRhIGRlIEROSSIgIlNlcnZpY2lvIGV4dGVybm8gcGFyYSB2YWxpZGFyIGxvcyBkYXRvcyBiw6FzaWNvcyBkZSBpZGVudGlmaWNhY2nDs24gZGVsIGNpdWRhZGFuby4iICJFeHRlcm5vIgoKICAgICAgICAjIFJlbGFjaW9uZXMgZGUgTml2ZWwgMSAoQ29udGV4dG8pCiAgICAgICAgcGFjaWVudGUgLT4gY2l0YXNhbHVkICJDb25zdWx0YSBkaXNwb25pYmlsaWRhZCwgcmVzZXJ2YSB5IGNhbmNlbGEgY2l0YXMiCiAgICAgICAgYWRtaXNpb24gLT4gY2l0YXNhbHVkICJBZG1pbmlzdHJhIGN1cG9zIGRlIGF0ZW5jacOzbiB5IHJlY2VwY2lvbmEgcGFjaWVudGVzIgogICAgICAgIG1lZGljbyAtPiBjaXRhc2FsdWQgIkNvbnN1bHRhIGxhIGxpc3RhIGRlIHBhY2llbnRlcyBkZWwgZMOtYSB5IHJlZ2lzdHJhIGF0ZW5jaW9uZXMiCiAgICAgICAgY2l0YXNhbHVkIC0+IHdoYXRzYXBwICJFbnbDrWEgcmVjb3JkYXRvcmlvcyB5IGF2aXNvcyBkZSBjaXRhcyIgIkhUVFBTL0pTT04iCiAgICAgICAgY2l0YXNhbHVkIC0+IHJlbmllYyAiQ29uc3VsdGEgZGF0b3MgYsOhc2ljb3MgZGUgaWRlbnRpZGFkIHBvciBETkkiICJIVFRQUy9KU09OIgoKICAgICAgICAjIFJlbGFjaW9uZXMgZGUgTml2ZWwgMiAoQ29udGVuZWRvcmVzKQogICAgICAgIHBhY2llbnRlIC0+IGNpdGFzYWx1ZC5wd2EgIlJlc2VydmEgeSBjYW5jZWxhIGNpdGFzIGRlc2RlIHN1IG5hdmVnYWRvciIgIkhUVFBTIgogICAgICAgIGFkbWlzaW9uIC0+IGNpdGFzYWx1ZC5wd2EgIkdlc3Rpb25hIGN1cG9zIHkgYWRtaXNpw7NuIGRlbCBkw61hIiAiSFRUUFMiCiAgICAgICAgbWVkaWNvIC0+IGNpdGFzYWx1ZC5wd2EgIkNvbnN1bHRhIGFnZW5kYSBkaWFyaWEgeSByZWdpc3RyYSBhdGVuY2nDs24iICJIVFRQUyIKCiAgICAgICAgY2l0YXNhbHVkLnB3YSAtPiBjaXRhc2FsdWQuYXBpICJSZWFsaXphIHBldGljaW9uZXMgYSBsYSBBUEkiICJIVFRQUy9KU09OIChSRVNUKSIKICAgICAgICBjaXRhc2FsdWQuYXBpIC0+IGNpdGFzYWx1ZC5kYiAiTGVlIHkgZXNjcmliZSByZWdpc3Ryb3MgdHJhbnNhY2Npb25hbGVzIiAiU1FML1RDUCIKICAgICAgICBjaXRhc2FsdWQuYXBpIC0+IGNpdGFzYWx1ZC5jb2xhICJFbmNvbGEgdGFyZWFzIGRlIHJlY29yZGF0b3JpbyB5IGNvbnN1bHRhIGNhY2jDqSIgIlJlZGlzIHByb3RvY29sIgogICAgICAgIGNpdGFzYWx1ZC5hcGkgLT4gcmVuaWVjICJWYWxpZGEgaWRlbnRpZGFkIGRlbCBwYWNpZW50ZSIgIkhUVFBTL0pTT04iCiAgICAgICAgY2l0YXNhbHVkLndvcmtlciAtPiBjaXRhc2FsdWQuY29sYSAiQ29uc3VtZSB0YXJlYXMgZGUgZW52w61vIHByb2dyYW1hZGFzIiAiUmVkaXMgcHJvdG9jb2wiCiAgICAgICAgY2l0YXNhbHVkLndvcmtlciAtPiB3aGF0c2FwcCAiRGVzcGFjaGEgbWVuc2FqZXMgZGUgcmVjb3JkYXRvcmlvIiAiSFRUUFMvSlNPTiIKCiAgICAgICAgIyBSZWxhY2lvbmVzIGRlIE5pdmVsIDMgKENvbXBvbmVudGVzIGRlIGxhIEFQSSkKICAgICAgICBjaXRhc2FsdWQucHdhIC0+IGNpdGFzYWx1ZC5hcGkuZGlzcG9uaWJpbGlkYWQgIkNvbnN1bHRhIGN1cG9zIGRpc3BvbmlibGVzIHBvciBlc3BlY2lhbGlkYWQiICJIVFRQUy9KU09OIgogICAgICAgIGNpdGFzYWx1ZC5wd2EgLT4gY2l0YXNhbHVkLmFwaS5yZXNlcnZhcyAiU29saWNpdGEgcmVzZXJ2YXIgbyBjYW5jZWxhciBjaXRhcyIgIkhUVFBTL0pTT04iCiAgICAgICAgY2l0YXNhbHVkLnB3YSAtPiBjaXRhc2FsdWQuYXBpLmFnZW5kYSAiQ29uc3VsdGEgcGFjaWVudGVzIGRlbCBkw61hIHkgYWRtaW5pc3RyYSBhZ2VuZGFzIiAiSFRUUFMvSlNPTiIKICAgICAgICBjaXRhc2FsdWQucHdhIC0+IGNpdGFzYWx1ZC5hcGkuaWRlbnRpZGFkICJBdXRlbnRpY2EgdXN1YXJpb3MiICJIVFRQUy9KU09OIgoKICAgICAgICBjaXRhc2FsdWQuYXBpLnJlc2VydmFzIC0+IGNpdGFzYWx1ZC5hcGkuaWRlbnRpZGFkICJPYnRpZW5lIGRhdG9zIGRlbCBwYWNpZW50ZSAoUmVwb3NpdG9yaW9QYWNpZW50ZXMpIgogICAgICAgIGNpdGFzYWx1ZC5hcGkucmVzZXJ2YXMgLT4gY2l0YXNhbHVkLmFwaS5kaXNwb25pYmlsaWRhZCAiVmVyaWZpY2EsIG9jdXBhIG8gbGliZXJhIGN1cG8geSBidXNjYSBhbHRlcm5hdGl2b3MiCiAgICAgICAgY2l0YXNhbHVkLmFwaS5yZXNlcnZhcyAtPiBjaXRhc2FsdWQuYXBpLm5vdGlmaWNhY2lvbmVzICJTb2xpY2l0YSBwcm9ncmFtYXIgcmVjb3JkYXRvcmlvIChwdWVydG8gTm90aWZpY2Fkb3IpIgogICAgICAgIGNpdGFzYWx1ZC5hcGkuZGlzcG9uaWJpbGlkYWQgLT4gY2l0YXNhbHVkLmFwaS5hZ2VuZGEgIkNvbnN1bHRhIG3DqWRpY29zIHkgY2VudHJvcyBkZSBzYWx1ZCBhc29jaWFkb3MiCgogICAgICAgIGNpdGFzYWx1ZC5hcGkuaWRlbnRpZGFkIC0+IHJlbmllYyAiVmFsaWRhIGRhdG9zIGRlbCBETkkiICJIVFRQUy9KU09OIgogICAgICAgIGNpdGFzYWx1ZC5hcGkubm90aWZpY2FjaW9uZXMgLT4gY2l0YXNhbHVkLmNvbGEgIkVuY29sYSB0YXJlYSBkZSBlbnbDrW8gZGUgV2hhdHNBcHAiICJSZWRpcyBwcm90b2NvbCIKCiAgICAgICAgY2l0YXNhbHVkLmFwaS5yZXNlcnZhcyAtPiBjaXRhc2FsdWQuZGIgIkxlZSB5IGVzY3JpYmUgY2l0YXMgKGVzcXVlbWEgcmVzZXJ2YXMpIiAiU1FML1RDUCIKICAgICAgICBjaXRhc2FsdWQuYXBpLmRpc3BvbmliaWxpZGFkIC0+IGNpdGFzYWx1ZC5kYiAiTGVlIHkgYWN0dWFsaXphIGN1cG9zIChlc3F1ZW1hIGRpc3BvbmliaWxpZGFkKSIgIlNRTC9UQ1AiCiAgICAgICAgY2l0YXNhbHVkLmFwaS5hZ2VuZGEgLT4gY2l0YXNhbHVkLmRiICJMZWUgeSBlc2NyaWJlIG3DqWRpY29zIHkgY2VudHJvcyAoZXNxdWVtYSBhZ2VuZGEpIiAiU1FML1RDUCIKICAgICAgICBjaXRhc2FsdWQuYXBpLmlkZW50aWRhZCAtPiBjaXRhc2FsdWQuZGIgIkxlZSB5IGVzY3JpYmUgcGFjaWVudGVzIHkgdXN1YXJpb3MgKGVzcXVlbWEgaWRlbnRpZGFkKSIgIlNRTC9UQ1AiCiAgICB9CgogICAgdmlld3MgewogICAgICAgIHN5c3RlbUNvbnRleHQgY2l0YXNhbHVkICJDb250ZXh0byIgIk5pdmVsIDE6IERpYWdyYW1hIGRlIGNvbnRleHRvIGRlbCBzaXN0ZW1hIENpdGFTYWx1ZCBBcmVxdWlwYS4iIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CgogICAgICAgIGNvbnRhaW5lciBjaXRhc2FsdWQgIkNvbnRlbmVkb3JlcyIgIk5pdmVsIDI6IENvbnRlbmVkb3JlcyBxdWUgY29uZm9ybWFuIENpdGFTYWx1ZCBBcmVxdWlwYS4iIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBjaXRhc2FsdWQuYXBpICJDb21wb25lbnRlcyIgIk5pdmVsIDM6IENvbXBvbmVudGVzIGludGVybm9zIGRlbCBjb250ZW5lZG9yIEFQSSBDaXRhU2FsdWQuIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyCiAgICAgICAgfQoKCiAgICAgICAgZHluYW1pYyBjaXRhc2FsdWQuYXBpICJSZXNlcnZhckNpdGEiICJEaW7DoW1pY286IHJlc2VydmFyIHVuYSBjaXRhIHZlcmlmaWNhbmRvIGN1cG8geSBldml0YW5kbyBkb2JsZSBhc2lnbmFjacOzbi4iIHsKICAgICAgICAgICAgY2l0YXNhbHVkLnB3YSAtPiBjaXRhc2FsdWQuYXBpLnJlc2VydmFzICJTb2xpY2l0YSByZXNlcnZhciB1bmEgY2l0YSIKICAgICAgICAgICAgY2l0YXNhbHVkLmFwaS5yZXNlcnZhcyAtPiBjaXRhc2FsdWQuYXBpLmlkZW50aWRhZCAiT2J0aWVuZSBkYXRvcyBkZWwgcGFjaWVudGUiCiAgICAgICAgICAgIGNpdGFzYWx1ZC5hcGkucmVzZXJ2YXMgLT4gY2l0YXNhbHVkLmFwaS5kaXNwb25pYmlsaWRhZCAiVmVyaWZpY2EgeSBvY3VwYSBlbCBjdXBvIgogICAgICAgICAgICBjaXRhc2FsdWQuYXBpLmRpc3BvbmliaWxpZGFkIC0+IGNpdGFzYWx1ZC5kYiAiQWN0dWFsaXphIGVsIGN1cG8gZGUgZm9ybWEgYXTDs21pY2EiCiAgICAgICAgICAgIGNpdGFzYWx1ZC5hcGkucmVzZXJ2YXMgLT4gY2l0YXNhbHVkLmRiICJSZWdpc3RyYSBsYSBjaXRhIgogICAgICAgICAgICBjaXRhc2FsdWQuYXBpLnJlc2VydmFzIC0+IGNpdGFzYWx1ZC5hcGkubm90aWZpY2FjaW9uZXMgIlNvbGljaXRhIHByb2dyYW1hciByZWNvcmRhdG9yaW8iCiAgICAgICAgICAgIGNpdGFzYWx1ZC5hcGkubm90aWZpY2FjaW9uZXMgLT4gY2l0YXNhbHVkLmNvbGEgIkVuY29sYSB0YXJlYSBkZSBlbnbDrW8gZGUgV2hhdHNBcHAiCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CiAgICAgICAgc3R5bGVzIHsKICAgICAgICAgICAgZWxlbWVudCAiUGVyc29uIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBwZXJzb24KICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3QgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlNvZnR3YXJlIFN5c3RlbSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMTE2OEJECiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRXh0ZXJubyIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29udGFpbmVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM0MzhERDUKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJDb21wb25lbnQiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzg1QkJGMAogICAgICAgICAgICAgICAgY29sb3IgIzAwMDAwMAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBjeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlF1ZXVlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBwaXBlCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiV2ViIEJyb3dzZXIiIHsKICAgICAgICAgICAgICAgIHNoYXBlIFdlYkJyb3dzZXIKICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KfQ==",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "componentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "containerId" : "6",
+      "description" : "Nivel 3: Componentes internos del contenedor API CitaSalud.",
+      "elements" : [ {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "Componentes",
+      "name" : "Component View: CitaSalud Arequipa - API CitaSalud",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "31"
+      }, {
+        "id" : "32"
+      }, {
+        "id" : "33"
+      }, {
+        "id" : "34"
+      }, {
+        "id" : "35"
+      }, {
+        "id" : "36"
+      }, {
+        "id" : "37"
+      }, {
+        "id" : "38"
+      }, {
+        "id" : "39"
+      }, {
+        "id" : "40"
+      }, {
+        "id" : "41"
+      }, {
+        "id" : "42"
+      }, {
+        "id" : "43"
+      }, {
+        "id" : "44"
+      } ]
+    } ],
+    "configuration" : {
+      "styles" : {
+        "elements" : [ {
+          "background" : "#85bbf0",
+          "color" : "#000000",
+          "tag" : "Component"
+        }, {
+          "background" : "#438dd5",
+          "color" : "#ffffff",
+          "tag" : "Container"
+        }, {
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        }, {
+          "background" : "#999999",
+          "color" : "#ffffff",
+          "tag" : "Externo"
+        }, {
+          "background" : "#08427b",
+          "color" : "#ffffff",
+          "shape" : "Person",
+          "tag" : "Person"
+        }, {
+          "shape" : "Pipe",
+          "tag" : "Queue"
+        }, {
+          "background" : "#1168bd",
+          "color" : "#ffffff",
+          "tag" : "Software System"
+        }, {
+          "shape" : "WebBrowser",
+          "tag" : "Web Browser"
+        } ]
+      },
+      "terminology" : { }
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Nivel 2: Contenedores que conforman CitaSalud Arequipa.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "Contenedores",
+      "name" : "Container View: CitaSalud Arequipa",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "22"
+      }, {
+        "id" : "23"
+      }, {
+        "id" : "24"
+      }, {
+        "id" : "25"
+      }, {
+        "id" : "26"
+      }, {
+        "id" : "27"
+      }, {
+        "id" : "28"
+      }, {
+        "id" : "29"
+      }, {
+        "id" : "30"
+      } ],
+      "softwareSystemId" : "4"
+    } ],
+    "dynamicViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Dinámico: reservar una cita verificando cupo y evitando doble asignación.",
+      "elementId" : "6",
+      "elements" : [ {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "ReservarCita",
+      "name" : "Dynamic View: CitaSalud Arequipa - API CitaSalud",
+      "order" : 4,
+      "relationships" : [ {
+        "description" : "Solicita reservar una cita",
+        "id" : "32",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "Obtiene datos del paciente",
+        "id" : "35",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "Verifica y ocupa el cupo",
+        "id" : "36",
+        "order" : "3",
+        "response" : false
+      }, {
+        "description" : "Actualiza el cupo de forma atómica",
+        "id" : "42",
+        "order" : "4",
+        "response" : false
+      }, {
+        "description" : "Registra la cita",
+        "id" : "41",
+        "order" : "5",
+        "response" : false
+      }, {
+        "description" : "Solicita programar recordatorio",
+        "id" : "37",
+        "order" : "6",
+        "response" : false
+      }, {
+        "description" : "Encola tarea de envío de WhatsApp",
+        "id" : "40",
+        "order" : "7",
+        "response" : false
+      } ]
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Nivel 1: Diagrama de contexto del sistema CitaSalud Arequipa.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "Contexto",
+      "name" : "System Context View: CitaSalud Arequipa",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "17"
+      }, {
+        "id" : "18"
+      }, {
+        "id" : "19"
+      }, {
+        "id" : "20"
+      }, {
+        "id" : "21"
+      } ],
+      "softwareSystemId" : "4"
+    } ]
+  }
+}
