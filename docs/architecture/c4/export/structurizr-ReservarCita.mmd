@@ -1,0 +1,46 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Dynamic View: CitaSalud Arequipa - API CitaSalud"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    subgraph 4 ["CitaSalud Arequipa"]
+      style 4 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      subgraph 6 ["API CitaSalud"]
+        style 6 fill:#ffffff,stroke:#2e6295,color:#2e6295
+
+        10["<div style='font-weight: bold'>Módulo Notificaciones</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Implementa el adaptador de<br />mensajería para encolar<br />recordatorios hacia WhatsApp.</div>"]
+        style 10 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        11["<div style='font-weight: bold'>Módulo Identidad y acceso</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Gestiona la autenticación y<br />el repositorio de pacientes y<br />personal.</div>"]
+        style 11 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        7["<div style='font-weight: bold'>Módulo Disponibilidad y cupos</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Gestiona los cupos de<br />horarios, verifica<br />disponibilidad y busca cupos<br />alternativos.</div>"]
+        style 7 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        8["<div style='font-weight: bold'>Módulo Reservas</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Orquesta la creación,<br />confirmación, cancelación y<br />ciclo de vida de las citas.</div>"]
+        style 8 fill:#85bbf0,stroke:#5d82a8,color:#000000
+      end
+
+      13[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL 16]</div><div style='font-size: 80%; margin-top:10px'>Almacena pacientes, médicos,<br />cupos y citas con aislamiento<br />lógico por esquemas.</div>")]
+      style 13 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      14["<div style='font-weight: bold'>Cola de tareas y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Almacena las tareas<br />asíncronas de notificación y<br />caché de disponibilidad.</div>"]
+      style 14 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      5["<div style='font-weight: bold'>Aplicación web progresiva</div><div style='font-size: 70%; margin-top: 0px'>[Container: React + Service Worker]</div><div style='font-size: 80%; margin-top:10px'>Interfaz web adaptable para<br />pacientes, personal de<br />admisión y médicos.</div>"]
+      style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    5["<div style='font-weight: bold'>Aplicación web progresiva</div><div style='font-size: 70%; margin-top: 0px'>[Container: React + Service Worker]</div><div style='font-size: 80%; margin-top:10px'>Interfaz web adaptable para<br />pacientes, personal de<br />admisión y médicos.</div>"]
+    style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    13[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL 16]</div><div style='font-size: 80%; margin-top:10px'>Almacena pacientes, médicos,<br />cupos y citas con aislamiento<br />lógico por esquemas.</div>")]
+    style 13 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    14["<div style='font-weight: bold'>Cola de tareas y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Almacena las tareas<br />asíncronas de notificación y<br />caché de disponibilidad.</div>"]
+    style 14 fill:#438dd5,stroke:#2e6295,color:#ffffff
+
+    5-. "<div>1. Solicita reservar una cita</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->8
+    8-. "<div>2. Obtiene datos del paciente</div><div style='font-size: 70%'></div>" .->11
+    8-. "<div>3. Verifica y ocupa el cupo</div><div style='font-size: 70%'></div>" .->7
+    7-. "<div>4. Actualiza el cupo de forma<br />atómica</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->13
+    8-. "<div>5. Registra la cita</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->13
+    8-. "<div>6. Solicita programar<br />recordatorio</div><div style='font-size: 70%'></div>" .->10
+    10-. "<div>7. Encola tarea de envío de<br />WhatsApp</div><div style='font-size: 70%'>[Redis protocol]</div>" .->14
+
+  end

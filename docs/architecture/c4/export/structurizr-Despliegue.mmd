@@ -1,0 +1,34 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Deployment View: CitaSalud Arequipa - Producción"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    subgraph 45 ["Celular o PC del usuario"]
+      style 45 fill:#ffffff,stroke:#444444,color:#444444
+
+      46["<div style='font-weight: bold'>Aplicación web progresiva</div><div style='font-size: 70%; margin-top: 0px'>[Container: React + Service Worker]</div><div style='font-size: 80%; margin-top:10px'>Interfaz web adaptable para<br />pacientes, personal de<br />admisión y médicos.</div>"]
+      style 46 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    subgraph 47 ["VPS en la nube"]
+      style 47 fill:#ffffff,stroke:#444444,color:#444444
+
+      48["<div style='font-weight: bold'>Nginx</div><div style='font-size: 70%; margin-top: 0px'>[Infrastructure Node: Nginx]</div><div style='font-size: 80%; margin-top:10px'>Sirve la PWA estática y<br />reenvía /api a Django<br />(ADR-004).</div>"]
+      style 48 fill:#ffffff,stroke:#444444,color:#444444
+      49["<div style='font-weight: bold'>API CitaSalud</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / Django REST Framework]</div><div style='font-size: 80%; margin-top:10px'>Monolito modular que expone<br />la lógica de negocio mediante<br />una API REST.</div>"]
+      style 49 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      51["<div style='font-weight: bold'>Worker de recordatorios</div><div style='font-size: 70%; margin-top: 0px'>[Container: Celery]</div><div style='font-size: 80%; margin-top:10px'>Procesa en segundo plano el<br />envío de recordatorios y sus<br />reintentos.</div>"]
+      style 51 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      52[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL 16]</div><div style='font-size: 80%; margin-top:10px'>Almacena pacientes, médicos,<br />cupos y citas con aislamiento<br />lógico por esquemas.</div>")]
+      style 52 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      54["<div style='font-weight: bold'>Cola de tareas y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Almacena las tareas<br />asíncronas de notificación y<br />caché de disponibilidad.</div>"]
+      style 54 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    46-. "<div>Realiza peticiones a la API</div><div style='font-size: 70%'>[HTTPS/JSON (REST)]</div>" .->49
+    49-. "<div>Lee y escribe registros<br />transaccionales</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->52
+    49-. "<div>Encola tareas de recordatorio<br />y consulta caché</div><div style='font-size: 70%'>[Redis protocol]</div>" .->54
+    51-. "<div>Consume tareas de envío<br />programadas</div><div style='font-size: 70%'>[Redis protocol]</div>" .->54
+
+  end

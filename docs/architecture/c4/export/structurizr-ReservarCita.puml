@@ -1,0 +1,46 @@
+@startuml
+title <size:24>Dynamic View: CitaSalud Arequipa - API CitaSalud</size>\n<size:24>Dinámico: reservar una cita verificando cupo y evitando doble asignación.</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+
+System_Boundary("CitaSaludArequipa_boundary", "CitaSalud Arequipa", $tags="") {
+  Container_Boundary("CitaSaludArequipa.APICitaSalud_boundary", "API CitaSalud", $tags="") {
+    Component(CitaSaludArequipa.APICitaSalud.MóduloNotificaciones, "Módulo Notificaciones", $techn="Django app", $descr="Implementa el adaptador de mensajería para encolar recordatorios hacia WhatsApp.", $tags="", $link="")
+    Component(CitaSaludArequipa.APICitaSalud.MóduloIdentidadyacceso, "Módulo Identidad y acceso", $techn="Django app", $descr="Gestiona la autenticación y el repositorio de pacientes y personal.", $tags="", $link="")
+    Component(CitaSaludArequipa.APICitaSalud.MóduloDisponibilidadycupos, "Módulo Disponibilidad y cupos", $techn="Django app", $descr="Gestiona los cupos de horarios, verifica disponibilidad y busca cupos alternativos.", $tags="", $link="")
+    Component(CitaSaludArequipa.APICitaSalud.MóduloReservas, "Módulo Reservas", $techn="Django app", $descr="Orquesta la creación, confirmación, cancelación y ciclo de vida de las citas.", $tags="", $link="")
+  }
+
+  ContainerDb(CitaSaludArequipa.Basededatos, "Base de datos", $techn="PostgreSQL 16", $descr="Almacena pacientes, médicos, cupos y citas con aislamiento lógico por esquemas.", $tags="", $link="")
+  ContainerQueue(CitaSaludArequipa.Coladetareasycaché, "Cola de tareas y caché", $techn="Redis", $descr="Almacena las tareas asíncronas de notificación y caché de disponibilidad.", $tags="", $link="")
+  Container(CitaSaludArequipa.Aplicaciónwebprogresiva, "Aplicación web progresiva", $techn="React + Service Worker", $descr="Interfaz web adaptable para pacientes, personal de admisión y médicos.", $tags="", $link="")
+}
+
+Container(CitaSaludArequipa.Aplicaciónwebprogresiva, "Aplicación web progresiva", $techn="React + Service Worker", $descr="Interfaz web adaptable para pacientes, personal de admisión y médicos.", $tags="", $link="")
+ContainerDb(CitaSaludArequipa.Basededatos, "Base de datos", $techn="PostgreSQL 16", $descr="Almacena pacientes, médicos, cupos y citas con aislamiento lógico por esquemas.", $tags="", $link="")
+ContainerQueue(CitaSaludArequipa.Coladetareasycaché, "Cola de tareas y caché", $techn="Redis", $descr="Almacena las tareas asíncronas de notificación y caché de disponibilidad.", $tags="", $link="")
+
+Rel(CitaSaludArequipa.Aplicaciónwebprogresiva, CitaSaludArequipa.APICitaSalud.MóduloReservas, "1: Solicita reservar una cita", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloReservas, CitaSaludArequipa.APICitaSalud.MóduloIdentidadyacceso, "2: Obtiene datos del paciente", $techn="", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloReservas, CitaSaludArequipa.APICitaSalud.MóduloDisponibilidadycupos, "3: Verifica y ocupa el cupo", $techn="", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloDisponibilidadycupos, CitaSaludArequipa.Basededatos, "4: Actualiza el cupo de forma atómica", $techn="SQL/TCP", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloReservas, CitaSaludArequipa.Basededatos, "5: Registra la cita", $techn="SQL/TCP", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloReservas, CitaSaludArequipa.APICitaSalud.MóduloNotificaciones, "6: Solicita programar recordatorio", $techn="", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloNotificaciones, CitaSaludArequipa.Coladetareasycaché, "7: Encola tarea de envío de WhatsApp", $techn="Redis protocol", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

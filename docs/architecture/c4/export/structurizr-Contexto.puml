@@ -1,0 +1,32 @@
+@startuml
+title <size:24>System Context View: CitaSalud Arequipa</size>\n<size:24>Nivel 1: Diagrama de contexto del sistema CitaSalud Arequipa.</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+
+Person(Paciente, "Paciente", $descr="Ciudadano de Arequipa que busca disponibilidad por especialidad, reserva o cancela sus citas médicas.", $tags="", $link="")
+System(WhatsAppBusinessAPI, "WhatsApp Business API", $descr="Servicio externo de mensajería para el envío de confirmaciones y recordatorios de citas.", $tags="", $link="")
+System(ServiciodeconsultadeDNI, "Servicio de consulta de DNI", $descr="Servicio externo para validar los datos básicos de identificación del ciudadano.", $tags="", $link="")
+Person(Personaldeadmisión, "Personal de admisión", $descr="Personal del centro de salud que administra cupos y registra la asistencia en mostrador.", $tags="", $link="")
+Person(Médico, "Médico", $descr="Profesional de salud que consulta su agenda del día y registra la atención de los pacientes.", $tags="", $link="")
+System(CitaSaludArequipa, "CitaSalud Arequipa", $descr="Plataforma regional para consultar disponibilidad de cupos, reservar y cancelar citas médicas con recordatorios automatizados.", $tags="", $link="")
+
+Rel(Paciente, CitaSaludArequipa, "Consulta disponibilidad, reserva y cancela citas", $techn="", $tags="", $link="")
+Rel(Personaldeadmisión, CitaSaludArequipa, "Administra cupos de atención y recepciona pacientes", $techn="", $tags="", $link="")
+Rel(Médico, CitaSaludArequipa, "Consulta la lista de pacientes del día y registra atenciones", $techn="", $tags="", $link="")
+Rel(CitaSaludArequipa, WhatsAppBusinessAPI, "Envía recordatorios y avisos de citas", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(CitaSaludArequipa, ServiciodeconsultadeDNI, "Consulta datos básicos de identidad por DNI", $techn="HTTPS/JSON", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

@@ -1,0 +1,51 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Component View: CitaSalud Arequipa - API CitaSalud"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    16["<div style='font-weight: bold'>Servicio de consulta de DNI</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Servicio externo para validar<br />los datos básicos de<br />identificación del ciudadano.</div>"]
+    style 16 fill:#999999,stroke:#6b6b6b,color:#ffffff
+
+    subgraph 4 ["CitaSalud Arequipa"]
+      style 4 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      subgraph 6 ["API CitaSalud"]
+        style 6 fill:#ffffff,stroke:#2e6295,color:#2e6295
+
+        10["<div style='font-weight: bold'>Módulo Notificaciones</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Implementa el adaptador de<br />mensajería para encolar<br />recordatorios hacia WhatsApp.</div>"]
+        style 10 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        11["<div style='font-weight: bold'>Módulo Identidad y acceso</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Gestiona la autenticación y<br />el repositorio de pacientes y<br />personal.</div>"]
+        style 11 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        7["<div style='font-weight: bold'>Módulo Disponibilidad y cupos</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Gestiona los cupos de<br />horarios, verifica<br />disponibilidad y busca cupos<br />alternativos.</div>"]
+        style 7 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        8["<div style='font-weight: bold'>Módulo Reservas</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Orquesta la creación,<br />confirmación, cancelación y<br />ciclo de vida de las citas.</div>"]
+        style 8 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        9["<div style='font-weight: bold'>Módulo Agenda médica</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Administra los centros de<br />salud, médicos,<br />especialidades y agendas<br />diarias.</div>"]
+        style 9 fill:#85bbf0,stroke:#5d82a8,color:#000000
+      end
+
+      13[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL 16]</div><div style='font-size: 80%; margin-top:10px'>Almacena pacientes, médicos,<br />cupos y citas con aislamiento<br />lógico por esquemas.</div>")]
+      style 13 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      14["<div style='font-weight: bold'>Cola de tareas y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Almacena las tareas<br />asíncronas de notificación y<br />caché de disponibilidad.</div>"]
+      style 14 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      5["<div style='font-weight: bold'>Aplicación web progresiva</div><div style='font-size: 70%; margin-top: 0px'>[Container: React + Service Worker]</div><div style='font-size: 80%; margin-top:10px'>Interfaz web adaptable para<br />pacientes, personal de<br />admisión y médicos.</div>"]
+      style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    5-. "<div>Consulta cupos disponibles<br />por especialidad</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->7
+    5-. "<div>Solicita reservar o cancelar<br />citas</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->8
+    5-. "<div>Consulta pacientes del día y<br />administra agendas</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->9
+    5-. "<div>Autentica usuarios</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->11
+    8-. "<div>Obtiene datos del paciente<br />(RepositorioPacientes)</div><div style='font-size: 70%'></div>" .->11
+    8-. "<div>Verifica, ocupa o libera cupo<br />y busca alternativos</div><div style='font-size: 70%'></div>" .->7
+    8-. "<div>Solicita programar<br />recordatorio (puerto<br />Notificador)</div><div style='font-size: 70%'></div>" .->10
+    7-. "<div>Consulta médicos y centros de<br />salud asociados</div><div style='font-size: 70%'></div>" .->9
+    11-. "<div>Valida datos del DNI</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->16
+    10-. "<div>Encola tarea de envío de<br />WhatsApp</div><div style='font-size: 70%'>[Redis protocol]</div>" .->14
+    8-. "<div>Lee y escribe citas (esquema<br />reservas)</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->13
+    7-. "<div>Lee y actualiza cupos<br />(esquema disponibilidad)</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->13
+    9-. "<div>Lee y escribe médicos y<br />centros (esquema agenda)</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->13
+    11-. "<div>Lee y escribe pacientes y<br />usuarios (esquema identidad)</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->13
+
+  end

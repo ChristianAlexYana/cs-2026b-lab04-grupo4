@@ -1,0 +1,52 @@
+@startuml
+title <size:24>Component View: CitaSalud Arequipa - API CitaSalud</size>\n<size:24>Nivel 3: Componentes internos del contenedor API CitaSalud.</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+
+System(ServiciodeconsultadeDNI, "Servicio de consulta de DNI", $descr="Servicio externo para validar los datos básicos de identificación del ciudadano.", $tags="", $link="")
+
+System_Boundary("CitaSaludArequipa_boundary", "CitaSalud Arequipa", $tags="") {
+  Container_Boundary("CitaSaludArequipa.APICitaSalud_boundary", "API CitaSalud", $tags="") {
+    Component(CitaSaludArequipa.APICitaSalud.MóduloNotificaciones, "Módulo Notificaciones", $techn="Django app", $descr="Implementa el adaptador de mensajería para encolar recordatorios hacia WhatsApp.", $tags="", $link="")
+    Component(CitaSaludArequipa.APICitaSalud.MóduloIdentidadyacceso, "Módulo Identidad y acceso", $techn="Django app", $descr="Gestiona la autenticación y el repositorio de pacientes y personal.", $tags="", $link="")
+    Component(CitaSaludArequipa.APICitaSalud.MóduloDisponibilidadycupos, "Módulo Disponibilidad y cupos", $techn="Django app", $descr="Gestiona los cupos de horarios, verifica disponibilidad y busca cupos alternativos.", $tags="", $link="")
+    Component(CitaSaludArequipa.APICitaSalud.MóduloReservas, "Módulo Reservas", $techn="Django app", $descr="Orquesta la creación, confirmación, cancelación y ciclo de vida de las citas.", $tags="", $link="")
+    Component(CitaSaludArequipa.APICitaSalud.MóduloAgendamédica, "Módulo Agenda médica", $techn="Django app", $descr="Administra los centros de salud, médicos, especialidades y agendas diarias.", $tags="", $link="")
+  }
+
+  ContainerDb(CitaSaludArequipa.Basededatos, "Base de datos", $techn="PostgreSQL 16", $descr="Almacena pacientes, médicos, cupos y citas con aislamiento lógico por esquemas.", $tags="", $link="")
+  ContainerQueue(CitaSaludArequipa.Coladetareasycaché, "Cola de tareas y caché", $techn="Redis", $descr="Almacena las tareas asíncronas de notificación y caché de disponibilidad.", $tags="", $link="")
+  Container(CitaSaludArequipa.Aplicaciónwebprogresiva, "Aplicación web progresiva", $techn="React + Service Worker", $descr="Interfaz web adaptable para pacientes, personal de admisión y médicos.", $tags="", $link="")
+}
+
+Rel(CitaSaludArequipa.Aplicaciónwebprogresiva, CitaSaludArequipa.APICitaSalud.MóduloDisponibilidadycupos, "Consulta cupos disponibles por especialidad", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(CitaSaludArequipa.Aplicaciónwebprogresiva, CitaSaludArequipa.APICitaSalud.MóduloReservas, "Solicita reservar o cancelar citas", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(CitaSaludArequipa.Aplicaciónwebprogresiva, CitaSaludArequipa.APICitaSalud.MóduloAgendamédica, "Consulta pacientes del día y administra agendas", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(CitaSaludArequipa.Aplicaciónwebprogresiva, CitaSaludArequipa.APICitaSalud.MóduloIdentidadyacceso, "Autentica usuarios", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloReservas, CitaSaludArequipa.APICitaSalud.MóduloIdentidadyacceso, "Obtiene datos del paciente (RepositorioPacientes)", $techn="", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloReservas, CitaSaludArequipa.APICitaSalud.MóduloDisponibilidadycupos, "Verifica, ocupa o libera cupo y busca alternativos", $techn="", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloReservas, CitaSaludArequipa.APICitaSalud.MóduloNotificaciones, "Solicita programar recordatorio (puerto Notificador)", $techn="", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloDisponibilidadycupos, CitaSaludArequipa.APICitaSalud.MóduloAgendamédica, "Consulta médicos y centros de salud asociados", $techn="", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloIdentidadyacceso, ServiciodeconsultadeDNI, "Valida datos del DNI", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloNotificaciones, CitaSaludArequipa.Coladetareasycaché, "Encola tarea de envío de WhatsApp", $techn="Redis protocol", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloReservas, CitaSaludArequipa.Basededatos, "Lee y escribe citas (esquema reservas)", $techn="SQL/TCP", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloDisponibilidadycupos, CitaSaludArequipa.Basededatos, "Lee y actualiza cupos (esquema disponibilidad)", $techn="SQL/TCP", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloAgendamédica, CitaSaludArequipa.Basededatos, "Lee y escribe médicos y centros (esquema agenda)", $techn="SQL/TCP", $tags="", $link="")
+Rel(CitaSaludArequipa.APICitaSalud.MóduloIdentidadyacceso, CitaSaludArequipa.Basededatos, "Lee y escribe pacientes y usuarios (esquema identidad)", $techn="SQL/TCP", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml
