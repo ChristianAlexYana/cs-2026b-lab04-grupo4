@@ -116,3 +116,50 @@ stateDiagram-v2
 | Yana Huanca Christian Alexander | E4 (actividades), E5 (paquetes), E6 (round-trip), etiqueta de entrega |
 
 Etiqueta de entrega: `v0.5-diseno`.
+
+## Arquitectura C4 (Lab 06)
+
+Modelo C4 de CitaSalud Arequipa escrito en Structurizr DSL (`docs/architecture/c4/workspace.dsl`). Todas las vistas salen de ese único archivo.
+
+### Contexto del sistema (nivel 1)
+```mermaid
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["System Context View: CitaSalud Arequipa"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Paciente</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Ciudadano de Arequipa que<br />busca disponibilidad por<br />especialidad, reserva o<br />cancela sus citas médicas.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    15["<div style='font-weight: bold'>WhatsApp Business API</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Servicio externo de<br />mensajería para el envío de<br />confirmaciones y<br />recordatorios de citas.</div>"]
+    style 15 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    16["<div style='font-weight: bold'>Servicio de consulta de DNI</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Servicio externo para validar<br />los datos básicos de<br />identificación del ciudadano.</div>"]
+    style 16 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    2["<div style='font-weight: bold'>Personal de admisión</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Personal del centro de salud<br />que administra cupos y<br />registra la asistencia en<br />mostrador.</div>"]
+    style 2 fill:#08427b,stroke:#052e56,color:#ffffff
+    3["<div style='font-weight: bold'>Médico</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Profesional de salud que<br />consulta su agenda del día y<br />registra la atención de los<br />pacientes.</div>"]
+    style 3 fill:#08427b,stroke:#052e56,color:#ffffff
+    4["<div style='font-weight: bold'>CitaSalud Arequipa</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Plataforma regional para<br />consultar disponibilidad de<br />cupos, reservar y cancelar<br />citas médicas con<br />recordatorios automatizados.</div>"]
+    style 4 fill:#1168bd,stroke:#0b4884,color:#ffffff
+
+    1-. "<div>Consulta disponibilidad,<br />reserva y cancela citas</div><div style='font-size: 70%'></div>" .->4
+    2-. "<div>Administra cupos de atención<br />y recepciona pacientes</div><div style='font-size: 70%'></div>" .->4
+    3-. "<div>Consulta la lista de<br />pacientes del día y registra<br />atenciones</div><div style='font-size: 70%'></div>" .->4
+    4-. "<div>Envía recordatorios y avisos<br />de citas</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->15
+    4-. "<div>Consulta datos básicos de<br />identidad por DNI</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->16
+
+  end
+```
+
+### Vistas del modelo
+- [Contexto (nivel 1)](docs/architecture/c4/img/structurizr-Contexto.png)
+- [Contenedores (nivel 2)](docs/architecture/c4/img/structurizr-Contenedores.png)
+- [Componentes (nivel 3)](docs/architecture/c4/img/structurizr-Componentes.png)
+- [Dinámica: reservar una cita](docs/architecture/c4/img/structurizr-ReservarCita.png)
+- [Despliegue en producción](docs/architecture/c4/img/structurizr-Despliegue.png)
+
+### Documentos
+- [Inventario](docs/architecture/c4/inventario.md) · [Comparación](docs/architecture/c4/comparacion.md) · [Revisión con la lista oficial](docs/architecture/c4/revision-c4.md) · [Explicación para público no técnico](docs/architecture/c4/explicacion.md) · [Bitácora de IA](docs/architecture/c4/bitacora-ia.md) · [Revisión cruzada](docs/architecture/c4/revision-cruzada.md)
+- Nivel 4 (código): [clases.puml](docs/design/clases.puml) del Laboratorio 05.
+
+Etiqueta de entrega: `v0.6-c4`.
