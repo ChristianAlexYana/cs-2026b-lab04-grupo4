@@ -159,7 +159,7 @@ graph LR
 - [Despliegue en producción](docs/architecture/c4/img/structurizr-Despliegue.png)
 
 ### Documentos
-- [Inventario](docs/architecture/c4/inventario.md) · [Comparación](docs/architecture/c4/comparacion.md) · [Revisión con la lista oficial](docs/architecture/c4/revision-c4.md) · [Explicación para público no técnico](docs/architecture/c4/explicacion.md) · [Bitácora de IA](docs/architecture/c4/bitacora-ia.md) · [Revisión cruzada](docs/architecture/c4/revision-cruzada.md)
+- [Inventario](docs/architecture/c4/inventario.md) · [Comparación](docs/architecture/c4/comparacion.md) · [Revisión con la lista oficial](docs/architecture/c4/revision-c4.md) · [Explicación para público no técnico](docs/architecture/c4/explicacion.md) · [Bitácora de IA](docs/architecture/c4/bitacora-ia.md)
 - Nivel 4 (código): [clases.puml](docs/design/clases.puml) del Laboratorio 05.
 
 Etiqueta de entrega: `v0.6-c4`.
