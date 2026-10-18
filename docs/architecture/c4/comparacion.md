@@ -8,7 +8,7 @@ La secuencia UML del Lab 05 muestra lo que la vista dinámica omite: el orden es
 
 | Criterio | Escrito a mano (contexto-manual.puml) | Modelo exportado (workspace.dsl) |
 |---|---|---|
-| Tiempo invertido | X min para un solo diagrama (el de contexto); cada vista adicional exigiría otro archivo escrito a mano. | Y min para validar, exportar a C4-PlantUML y Mermaid y generar los 5 PNG; las 5 vistas salen con comandos a partir del modelo ya existente. |
+| Tiempo invertido | ≈6 min para un solo diagrama (el de contexto; archivo creado a las 01:31 y renderizado a las 01:37); cada vista adicional exigiría otro archivo escrito a mano. | ≈3 min de ejecución efectiva para exportar a C4-PlantUML y Mermaid y generar los 5 PNG (exportación a las 01:24 y PNG a las 01:27), a partir del modelo ya existente. El proceso total tomó ≈1 h 54 min desde el primer intento (23:33) por el desvío del CLI antiguo. |
 | Errores encontrados | Ninguno detectado al escribirlo. Sin embargo, nada comprueba automáticamente que los nombres y las etiquetas coincidan con el modelo: una diferencia habría pasado inadvertida. | El Structurizr CLI antiguo (`structurizr/cli`) no exportó ningún archivo y solo mostró un aviso de que ya no recibe actualizaciones, sin indicar error. Se resolvió migrando a la imagen `structurizr/structurizr`, con las opciones `-workspace`, `-format` y `-output`. |
 | Si mañana cambia el nombre de un contenedor | Hay que corregirlo a mano en cada diagrama que lo mencione; es fácil olvidar alguno. | Se cambia una vez en `workspace.dsl` y al volver a exportar todas las vistas se actualizan. |
 
