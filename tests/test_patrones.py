@@ -1,3 +1,5 @@
+import pytest
+from src.reservas.estados import CitaContexto
 from src.reservas.politicas import FabricaPoliticas, PoliticaAsignacionCupo
 
 def test_open_closed_nueva_politica_sin_modificar_el_servicio():
@@ -10,3 +12,11 @@ def test_open_closed_nueva_politica_sin_modificar_el_servicio():
     
     politica = fabrica.crear("NUEVA")
     assert isinstance(politica, PoliticaNueva)
+
+def test_transicion_invalida_lanza_error_por_patron_state():
+    cita = CitaContexto()
+    cita.reservar() # Pasa a Reservada
+    cita.cancelar() # Pasa a Cancelada
+    
+    with pytest.raises(ValueError, match="No se puede reservar una cita en estado CANCELADA"):
+        cita.reservar() # Transición prohibida
