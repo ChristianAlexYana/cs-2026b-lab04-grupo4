@@ -104,3 +104,101 @@ def test_decorator_propaga_timeout_al_agotar_intentos():
     with pytest.raises(TimeoutError):
         ConReintentos(falso).programar_recordatorio(SimpleNamespace(id=1, celular="111"))
     assert falso.llamadas == 3
+
+# ---------- E5: IA aislada ----------
+from src.reservas.ia import (
+    ClasificadorMotivo,
+    LLMSimuladoAdapter,
+    LLMSimuladoSDK,
+    ProveedorLLM,
+)
+
+
+def test_ia_clasifica_motivo_con_llm_simulado():
+    sdk = LLMSimuladoSDK("Cardiologia")
+    clasificador = ClasificadorMotivo(LLMSimuladoAdapter(sdk))
+
+    assert clasificador.sugerir_especialidad("dolor en el pecho") == "Cardiologia"
+    assert sdk.llamadas == 1
+
+
+def test_ia_proveedor_intercambiable_sin_tocar_el_clasificador():
+    class ProveedorFijo(ProveedorLLM):
+        def completar(self, prompt):
+            return "Pediatria"
+
+    clasificador = ClasificadorMotivo(ProveedorFijo())
+
+    assert clasificador.sugerir_especialidad("fiebre en un niño") == "Pediatria"
+# ---------- E5: Decorator de caché ----------
+from src.reservas.ia import ConCache
+
+
+def test_ia_cache_evita_llamadas_repetidas():
+    sdk = LLMSimuladoSDK("Cardiologia")
+    proveedor = ConCache(LLMSimuladoAdapter(sdk))
+
+    assert proveedor.completar("dolor en el pecho") == "Cardiologia"
+    assert proveedor.completar("dolor en el pecho") == "Cardiologia"
+    assert sdk.llamadas == 1
+
+    proveedor.completar("tos persistente")
+    assert sdk.llamadas == 2
+
+
+def test_ia_cache_no_guarda_las_respuestas_fallidas():
+    class ProveedorQueFallaUnaVez(ProveedorLLM):
+        def __init__(self):
+            self.llamadas = 0
+
+        def completar(self, prompt):
+            self.llamadas += 1
+            if self.llamadas == 1:
+                raise TimeoutError()
+            return "Pediatria"
+
+    interno = ProveedorQueFallaUnaVez()
+    proveedor = ConCache(interno)
+
+    with pytest.raises(TimeoutError):
+        proveedor.completar("fiebre")
+    assert proveedor.completar("fiebre") == "Pediatria"
+    assert interno.llamadas == 2
+# ---------- E5: Guardrails (Chain of Responsibility) ----------
+from src.reservas.ia import ConGuardrails, crear_cadena_guardrails
+
+
+def test_guardrails_dejan_pasar_una_respuesta_valida():
+    proveedor = ConGuardrails(
+        LLMSimuladoAdapter(LLMSimuladoSDK("Cardiologia")), crear_cadena_guardrails()
+    )
+
+    assert proveedor.completar("dolor en el pecho") == "Cardiologia"
+
+
+@pytest.mark.parametrize(
+    "respuesta_invalida, mensaje",
+    [
+        ("Usted tiene gripe", "diagnóstico"),
+        ("Astrologia", "catálogo"),
+        ("Medicina General" * 5, "demasiado larga"),
+    ],
+)
+def test_guardrails_bloquean_respuestas_invalidas(respuesta_invalida, mensaje):
+    proveedor = ConGuardrails(
+        LLMSimuladoAdapter(LLMSimuladoSDK(respuesta_invalida)), crear_cadena_guardrails()
+    )
+
+    with pytest.raises(ValueError, match=mensaje):
+        proveedor.completar("cualquier motivo")
+
+
+def test_respuesta_bloqueada_no_se_guarda_en_la_cache():
+    sdk = LLMSimuladoSDK("Usted tiene gripe")
+    proveedor = ConCache(ConGuardrails(LLMSimuladoAdapter(sdk), crear_cadena_guardrails()))
+
+    for _ in range(2):
+        with pytest.raises(ValueError):
+            proveedor.completar("tos")
+
+    assert sdk.llamadas == 2
