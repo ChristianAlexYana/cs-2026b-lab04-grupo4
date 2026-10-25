@@ -1,9 +1,10 @@
 import pytest
 from src.reservas.antes.servicio import ServicioReservasAntes, Cita
+from src.reservas.despues.servicio import ServicioReservasDespues
 
-@pytest.fixture
-def servicio():
-    return ServicioReservasAntes()
+@pytest.fixture(params=[ServicioReservasAntes, ServicioReservasDespues], ids=["antes", "despues"])
+def servicio(request):
+    return request.param()
 
 def test_reserva_con_cupo_disponible_devuelve_cita_reservada(servicio):
     cita = Cita(1, "12345678", "999888777", "Medicina General")
