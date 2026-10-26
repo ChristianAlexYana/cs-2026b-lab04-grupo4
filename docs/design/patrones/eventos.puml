@@ -1,0 +1,41 @@
+@startuml eventos
+!include comun.iuml
+title Observer + Decorator — eventos.py (E4)
+
+interface Suscriptor <<Observer>> {
+  + actualizar(evento: str, cita): void
+}
+class PublicadorEventos <<Observer>> {
+  - _suscriptores: list[Suscriptor]
+  + suscribir(suscriptor: Suscriptor): void
+  + publicar(evento: str, cita): void
+}
+class NotificadorWhatsApp <<Observer>> {
+  + actualizar(evento: str, cita): void
+}
+class SuscriptorAuditoria <<Observer>> {
+  + registro: list[str]
+  + actualizar(evento: str, cita): void
+}
+interface Notificador <<puerto>> {
+  + programar_recordatorio(cita): void
+}
+class ConReintentos <<Decorator>> {
+  - _max_intentos: int
+  + programar_recordatorio(cita): void
+}
+class WhatsAppAdapter <<Adapter>>
+
+Suscriptor <|.. NotificadorWhatsApp
+Suscriptor <|.. SuscriptorAuditoria
+PublicadorEventos "1" o-- "0..*" Suscriptor : notifica >
+NotificadorWhatsApp --> Notificador
+Notificador <|.. ConReintentos
+Notificador <|.. WhatsAppAdapter
+ConReintentos "1" o-- "1" Notificador : envuelve >
+
+note bottom of ConReintentos
+  Reintenta solo ante TimeoutError.
+  Un rechazo (resultado inválido) no se reintenta.
+end note
+@enduml

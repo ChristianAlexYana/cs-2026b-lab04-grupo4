@@ -1,0 +1,41 @@
+@startuml estados
+!include comun.iuml
+title State — estados.py (E3)
+
+class EstadoDeCita <<State>> {
+  + nombre: str
+  + reservar(cita): void
+  + cancelar(cita): void
+}
+class Borrador <<State>> {
+  + reservar(cita): void
+}
+class Reservada <<State>> {
+  + cancelar(cita): void
+}
+class Cancelada <<State>>
+class CitaContexto <<contexto>> {
+  + estado_actual: EstadoDeCita
+  + cambiar_estado(nuevo_estado): void
+  + reservar(): void
+  + cancelar(): void
+}
+class ContextoEstado <<contexto>> {
+  parte del estado actual de la cita
+}
+
+EstadoDeCita <|-- Borrador
+EstadoDeCita <|-- Reservada
+EstadoDeCita <|-- Cancelada
+CitaContexto "1" o-- "1" EstadoDeCita : estado_actual
+CitaContexto <|-- ContextoEstado
+Borrador ..> Reservada : reservar()
+Reservada ..> Cancelada : cancelar()
+
+note bottom of EstadoDeCita
+  La clase base prohíbe todas las transiciones (ValueError);
+  cada estado redefine solo las permitidas.
+  Implementados: BORRADOR, RESERVADA, CANCELADA.
+  Del Lab 05 quedan fuera por alcance: CONFIRMADA, ATENDIDA, NO_ASISTIO.
+end note
+@enduml
