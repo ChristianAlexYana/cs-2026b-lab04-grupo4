@@ -108,6 +108,53 @@ ServicioReservas ..> Notificador
 ServicioReservas ..> ServicioDisponibilidad
 ServicioDisponibilidad ..> RepositorioCupos
 
+' ===== Lab 07: patrones de diseño aplicados al módulo Reservas =====
+package "Patrones de diseño (Lab 07)" {
+  interface PoliticaAsignacionCupo <<Strategy>> {
+    + buscar_cupo(especialidad: String, cupos_db: dict): bool
+  }
+  class FabricaPoliticas <<Factory>> {
+    + crear(nombre: String): PoliticaAsignacionCupo
+  }
+  class EstadoDeCita <<State>> {
+    + reservar(cita): void
+    + cancelar(cita): void
+  }
+  class CitaContexto <<contexto>> {
+    + cambiar_estado(nuevo_estado): void
+  }
+  interface Suscriptor <<Observer>> {
+    + actualizar(evento: String, cita): void
+  }
+  class PublicadorEventos <<Observer>> {
+    + suscribir(s: Suscriptor): void
+    + publicar(evento: String, cita): void
+  }
+  class ConReintentos <<Decorator>> {
+    + programar_recordatorio(cita): void
+  }
+  interface ProveedorLLM <<Strategy>> {
+    + completar(prompt: String): String
+  }
+  class ConCache <<Decorator>>
+  class ConGuardrails <<Decorator>>
+  abstract class Guardrail <<Handler>> {
+    + validar(respuesta: String): String
+  }
+}
+
+FabricaPoliticas ..> PoliticaAsignacionCupo
+CitaContexto "1" o-- "1" EstadoDeCita
+PublicadorEventos "1" o-- "0..*" Suscriptor
+Notificador <|.. ConReintentos
+ConReintentos "1" o-- "1" Notificador
+ProveedorLLM <|.. ConCache
+ProveedorLLM <|.. ConGuardrails
+ConGuardrails --> Guardrail
+ServicioReservas ..> FabricaPoliticas
+ServicioReservas ..> PublicadorEventos
+ServicioReservas ..> CitaContexto
+
 note bottom of Cita
   Regla de negocio (ADR-002): como máximo una cita
   activa (RESERVADA o CONFIRMADA) por cupo.

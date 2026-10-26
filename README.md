@@ -163,3 +163,36 @@ graph LR
 - Nivel 4 (código): [clases.puml](docs/design/clases.puml) del Laboratorio 05.
 
 Etiqueta de entrega: `v0.6-c4`.
+
+## Patrones de diseño (Lab 07)
+
+Refactor del flujo crítico «reservar una cita» (HU-02) hacia patrones de diseño, protegido con pruebas de caracterización y medido con radon. La decisión está en el [ADR-006](docs/architecture/adr/006-patrones-de-diseno.md) y las interacciones con IA en la [bitácora](docs/design/patrones/bitacora-ia.md).
+
+### Olor → patrón → prueba
+
+| Olor | Patrón | Prueba que lo demuestra |
+|---|---|---|
+| if/elif que elige la política de cupos alternativos | Strategy + Factory (`politicas.py`) | `test_open_closed_nueva_politica_sin_modificar_el_servicio` |
+| El servicio conoce los SDK de WhatsApp y DNI | Adapter (`adaptadores.py`) | `test_observer_notifica_a_todos_los_suscriptores` (usa `WhatsAppAdapter` con un SDK espía) |
+| Condicionales anidados sobre el estado de la cita | State (`estados.py`) | `test_transicion_invalida_lanza_error_por_patron_state` |
+| Notificación armada a mano en el servicio | Observer (`eventos.py`) | `test_observer_nuevo_suscriptor_sin_tocar_el_publicador` |
+| Bloque de reintentos duplicado | Decorator (`ConReintentos`) | `test_decorator_reintenta_solo_ante_timeout` |
+| Salida del LLM no confiable | Decorator + Chain of Responsibility (`ia.py`) | `test_guardrails_bloquean_respuestas_invalidas` |
+
+Patrón rechazado: **Singleton** para las fábricas (propuesto por la IA), por estado global y peor testabilidad.
+
+### Métricas (radon)
+
+| Métrica | Antes | Después |
+|---|---|---|
+| Complejidad de `reservar_cita()` | C (14) | A (3) |
+| Complejidad promedio del módulo | B (5.4) | A (3.2) |
+| Líneas de código (SLOC) | 48 | 159 |
+| Archivos | 1 | 5 |
+
+Costo: más líneas y más archivos entre los que saltar; ganancia: agregar una variante deja de modificar el servicio.
+
+### Diagramas por patrón
+[politicas](docs/design/patrones/img/politicas.png) · [estados](docs/design/patrones/img/estados.png) · [eventos](docs/design/patrones/img/eventos.png) · [ia](docs/design/patrones/img/ia.png) · [clases (actualizado)](docs/design/img/clases-reservas.png)
+
+Etiqueta de entrega: `v0.7-patrones`.

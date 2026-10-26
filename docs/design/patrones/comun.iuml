@@ -1,0 +1,32 @@
+' Estilo común de los diagramas de patrones (Lab 07, CitaSalud Arequipa)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam packageStyle rectangle
+skinparam nodesep 40
+skinparam ranksep 50
+skinparam classBorderColor #1A3A5C
+skinparam classBackgroundColor #EEF2F8
+skinparam ArrowColor #1A3A5C
+skinparam class {
+  BackgroundColor<<Strategy>> #E8F5E9
+  BorderColor<<Strategy>> #2E7D32
+  BackgroundColor<<Adapter>> #FFF3E0
+  BorderColor<<Adapter>> #E65100
+  BackgroundColor<<Factory>> #F3E5F5
+  BorderColor<<Factory>> #6A1B9A
+  BackgroundColor<<State>> #E3F2FD
+  BorderColor<<State>> #1565C0
+  BackgroundColor<<contexto>> #E1F5FE
+  BorderColor<<contexto>> #0277BD
+  BackgroundColor<<Observer>> #FFFDE7
+  BorderColor<<Observer>> #F9A825
+  BackgroundColor<<Decorator>> #FCE4EC
+  BorderColor<<Decorator>> #AD1457
+  BackgroundColor<<Handler>> #EDE7F6
+  BorderColor<<Handler>> #4527A0
+  BackgroundColor<<externo>> #F2F2F2
+  BorderColor<<externo>> #7F7F7F
+  BackgroundColor<<puerto>> #FFFFFF
+  BorderColor<<puerto>> #1A3A5C
+}

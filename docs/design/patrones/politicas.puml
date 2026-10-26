@@ -1,0 +1,55 @@
+@startuml politicas
+!include comun.iuml
+title Strategy + Adapter + Factory — politicas.py y adaptadores.py (E2)
+
+interface PoliticaAsignacionCupo <<Strategy>> {
+  + buscar_cupo(especialidad: str, cupos_db: dict): bool
+}
+class PoliticaMasProntoDisponible <<Strategy>>
+class PoliticaMismoMedico <<Strategy>>
+class FabricaPoliticas <<Factory>> {
+  - _creadores: dict
+  + crear(nombre: str): PoliticaAsignacionCupo
+}
+class ServicioReservasDespues {
+  + reservar_cita(cita, politica_alternativos): str
+}
+
+PoliticaAsignacionCupo <|.. PoliticaMasProntoDisponible
+PoliticaAsignacionCupo <|.. PoliticaMismoMedico
+FabricaPoliticas ..> PoliticaAsignacionCupo : crea
+FabricaPoliticas ..> PoliticaMasProntoDisponible : "PRONTO"
+FabricaPoliticas ..> PoliticaMismoMedico : "MISMO_MEDICO"
+ServicioReservasDespues --> FabricaPoliticas : usa
+
+interface Notificador <<puerto>> {
+  + programar_recordatorio(cita: Cita): void
+}
+class WhatsAppAdapter <<Adapter>> {
+  + programar_recordatorio(cita: Cita): void
+}
+class WhatsAppSDK <<externo>> {
+  + enviar_mensaje(telefono, texto): dict
+}
+interface ValidadorIdentidad <<puerto>> {
+  + validar_dni(dni: str): bool
+}
+class DniAdapter <<Adapter>> {
+  + validar_dni(dni: str): bool
+}
+class ReniecSDK <<externo>> {
+  + consultar(dni): tuple
+}
+
+Notificador <|.. WhatsAppAdapter
+WhatsAppAdapter --> WhatsAppSDK : traduce
+ValidadorIdentidad <|.. DniAdapter
+DniAdapter --> ReniecSDK : traduce
+ServicioReservasDespues --> Notificador
+ServicioReservasDespues --> ValidadorIdentidad
+
+note bottom of FabricaPoliticas
+  Agregar una política = una clase nueva + registro
+  en la fábrica; reservar_cita() no se modifica (abierto/cerrado).
+end note
+@enduml

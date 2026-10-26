@@ -1,0 +1,50 @@
+@startuml ia
+!include comun.iuml
+title IA aislada — ia.py (E5): Strategy + Adapter + Decorator + Chain of Responsibility
+
+interface ProveedorLLM <<Strategy>> {
+  + completar(prompt: str): str
+}
+class LLMSimuladoAdapter <<Adapter>> {
+  + completar(prompt: str): str
+}
+class LLMSimuladoSDK <<externo>> {
+  + generar(entrada: str): dict
+}
+class ConCache <<Decorator>> {
+  - _cache: dict[str, str]
+  + completar(prompt: str): str
+}
+class ConGuardrails <<Decorator>> {
+  + completar(prompt: str): str
+}
+class ClasificadorMotivo {
+  + sugerir_especialidad(motivo: str): str
+}
+abstract class Guardrail <<Handler>> {
+  - _siguiente: Guardrail
+  + validar(respuesta: str): str
+  # {abstract} _revisar(respuesta: str): void
+}
+class LongitudMaxima <<Handler>>
+class SinDiagnosticos <<Handler>>
+class EspecialidadValida <<Handler>>
+
+ProveedorLLM <|.. LLMSimuladoAdapter
+ProveedorLLM <|.. ConCache
+ProveedorLLM <|.. ConGuardrails
+LLMSimuladoAdapter --> LLMSimuladoSDK : traduce
+ConCache "1" o-- "1" ProveedorLLM : envuelve >
+ConGuardrails "1" o-- "1" ProveedorLLM : envuelve >
+ConGuardrails --> Guardrail : cadena
+ClasificadorMotivo --> ProveedorLLM
+Guardrail <|-- LongitudMaxima
+Guardrail <|-- SinDiagnosticos
+Guardrail <|-- EspecialidadValida
+Guardrail "1" o-- "0..1" Guardrail : siguiente
+
+note bottom of ConGuardrails
+  Orden de la cadena: LongitudMaxima -> SinDiagnosticos -> EspecialidadValida.
+  La salida del LLM es dato no confiable: se valida antes de usarla.
+end note
+@enduml
