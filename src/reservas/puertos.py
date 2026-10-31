@@ -27,3 +27,9 @@ class RepositorioCitas(ABC):
 class Notificador(ABC):
     @abstractmethod
     def programar_recordatorio(self, cita: Cita) -> None: ...
+
+class ValidadorIdentidad(ABC):
+    """Puerto del servicio de consulta de DNI."""
+
+    @abstractmethod
+    def validar_dni(self, dni: str) -> bool: ...

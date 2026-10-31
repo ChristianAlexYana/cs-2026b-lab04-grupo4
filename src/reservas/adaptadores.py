@@ -1,7 +1,6 @@
 """Adaptadores de integraciones externas (ADR-001, ADR-003)."""
-from abc import ABC, abstractmethod
 from .dominio import Cita
-from .puertos import Notificador
+from .puertos import Notificador, ValidadorIdentidad  # noqa: F401 (reexportado)
 from .externos import WhatsAppSDK, ReniecSDK
 
 # 1. Adaptador para WhatsApp (Completando el que ya tenías del Lab 05)
@@ -16,10 +15,6 @@ class WhatsAppAdapter(Notificador):
             raise ValueError("Fallo al programar recordatorio en WhatsApp")
 
 # 2. Adaptador para el DNI (El que agregamos para el Lab 07)
-class ValidadorIdentidad(ABC):
-    @abstractmethod
-    def validar_dni(self, dni: str) -> bool: pass
-
 class DniAdapter(ValidadorIdentidad):
     def __init__(self, sdk=ReniecSDK()):
         self.sdk = sdk
