@@ -1,0 +1,26 @@
+[importlinter]
+root_package = src
+include_external_packages = False
+
+[importlinter:contract:ff01]
+name = FF-01 Capas del monolito modular sin ciclos (ADR-001)
+type = layers
+layers =
+    src.reservas.despues
+    src.reservas.adaptadores
+    src.reservas.servicios | src.reservas.eventos | src.reservas.resiliencia
+    src.reservas.puertos
+    src.reservas.dominio
+
+[importlinter:contract:ff02]
+name = FF-02 Solo el arranque conoce los adaptadores y SDK (ADR-005)
+type = forbidden
+source_modules =
+    src.reservas.dominio
+    src.reservas.puertos
+    src.reservas.servicios
+    src.reservas.eventos
+    src.reservas.resiliencia
+forbidden_modules =
+    src.reservas.adaptadores
+    src.reservas.externos
