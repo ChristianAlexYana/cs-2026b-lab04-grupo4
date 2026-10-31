@@ -8,9 +8,10 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
         medico = person "Médico" "Profesional de salud que consulta su agenda del día y registra la atención de los pacientes."
 
         citasalud = softwareSystem "CitaSalud Arequipa" "Plataforma regional para consultar disponibilidad de cupos, reservar y cancelar citas médicas con recordatorios automatizados." {
-            pwa = container "Aplicación web progresiva" "Interfaz web adaptable para pacientes, personal de admisión y médicos." "React + Service Worker" "Web Browser"
             
-            api = container "API CitaSalud" "Monolito modular que expone la lógica de negocio mediante una API REST." "Python / Django REST Framework" {
+            pwa = container "Aplicación web progresiva" "Interfaz web adaptable para pacientes, personal de admisión y médicos [QA-01, QA-02]." "React + Service Worker" "Web Browser"
+            
+            api = container "API CitaSalud" "Monolito modular con circuit breaker y RLS [QA-01, QA-02, QA-03]." "Python / Django REST Framework" {
                 disponibilidad = component "Módulo Disponibilidad y cupos" "Gestiona los cupos de horarios, verifica disponibilidad y busca cupos alternativos." "Django app"
                 reservas = component "Módulo Reservas" "Orquesta la creación, confirmación, cancelación y ciclo de vida de las citas." "Django app"
                 agenda = component "Módulo Agenda médica" "Administra los centros de salud, médicos, especialidades y agendas diarias." "Django app"
@@ -19,8 +20,8 @@ workspace "CitaSalud Arequipa" "Modelo C4 del sistema de reserva de citas médic
             }
 
             worker = container "Worker de recordatorios" "Procesa en segundo plano el envío de recordatorios y sus reintentos." "Celery"
-            db = container "Base de datos" "Almacena pacientes, médicos, cupos y citas con aislamiento lógico por esquemas." "PostgreSQL 16" "Database"
-            cola = container "Cola de tareas y caché" "Almacena las tareas asíncronas de notificación y caché de disponibilidad." "Redis" "Queue"
+            db = container "Base de datos" "Almacena pacientes, médicos, cupos y citas con aislamiento lógico por esquemas [QA-01, QA-03]." "PostgreSQL 16" "Database"
+            cola = container "Cola de tareas y caché" "Almacena las tareas asíncronas de notificación y caché de disponibilidad [QA-01, QA-02]." "Redis" "Queue"
         }
 
         whatsapp = softwareSystem "WhatsApp Business API" "Servicio externo de mensajería para el envío de confirmaciones y recordatorios de citas." "Externo"
