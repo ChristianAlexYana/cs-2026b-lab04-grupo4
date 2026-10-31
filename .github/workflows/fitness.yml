@@ -1,0 +1,21 @@
+name: fitness
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  fitness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependencias
+        run: pip install import-linter pytest
+      - name: FF-01 y FF-02 (estructurales, import-linter)
+        run: lint-imports
+      - name: Pruebas del Lab 07 y fitness functions de calidad (FF-03, FF-04)
+        run: python -m pytest -v
