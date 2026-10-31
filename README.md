@@ -196,3 +196,27 @@ Costo: más líneas y más archivos entre los que saltar; ganancia: agregar una 
 [politicas](docs/design/patrones/img/politicas.png) · [estados](docs/design/patrones/img/estados.png) · [eventos](docs/design/patrones/img/eventos.png) · [ia](docs/design/patrones/img/ia.png) · [clases (actualizado)](docs/design/img/clases-reservas.png)
 
 Etiqueta de entrega: `v0.7-patrones`.
+
+## Diseño de la arquitectura (Lab 08)
+
+![fitness](https://github.com/ChristianAlexYana/cs-2026b-lab04-grupo4/actions/workflows/fitness.yml/badge.svg)
+
+Escenario de crecimiento: 40 establecimientos, 8 veces más reservas a las 7:00 a. m. y el servicio de DNI cae con frecuencia. Restricciones: 1 mes, un VPS, monolito modular (ADR-001).
+
+### Árbol de utilidad
+![Árbol de utilidad](docs/architecture/utilidad/arbol.png)
+
+### Iteraciones de ADD
+| Iteración | Escenario | Táctica elegida | Evidencia | ¿Cumple? |
+|---|---|---|---|---|
+| 1 | QA-01: 360 req/s a las 7:00, p95 ≤ 1 s | Caché de disponibilidad + índice | `fitness/rendimiento.py`: p95 de 33 ms (sin tácticas: 176 s) | Sí |
+| 2 | QA-02: DNI caído 30 min, 0 reservas perdidas | Circuit breaker + reintentos + reserva pendiente | `fitness/disponibilidad.py`: 0 perdidas, 300 llamadas al DNI (sin tácticas: 81 000 perdidas) | Sí |
+| 3 | QA-03: 0 fugas entre establecimientos | RLS en PostgreSQL | Comparación de alternativas (`add/iteracion-3.md`) | Sí |
+
+### Decisiones y fitness functions
+- ADR: [007 caché](docs/architecture/adr/007-cache-y-control-concurrencia.md) · [008 resiliencia DNI](docs/architecture/adr/008-resiliencia-servicio-dni.md) · [009 RLS](docs/architecture/adr/009-aislamiento-multi-establecimiento-rls.md)
+- Iteraciones: [1](docs/architecture/add/iteracion-1.md) · [3](docs/architecture/add/iteracion-3.md)
+- Fitness functions (`.importlinter`, `tests/test_fitness.py`) corren en cada Pull Request con GitHub Actions.
+- Bitácora de IA: [bitacora-ia.md](docs/architecture/bitacora-ia.md)
+
+Etiqueta de entrega: `v0.8-arquitectura`.
