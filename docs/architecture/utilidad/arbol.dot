@@ -1,0 +1,21 @@
+digraph U {
+  graph [rankdir=LR, nodesep=0.12, ranksep=0.35, fontname="Arial", pad=0.15];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, margin="0.12,0.06"];
+  edge [color="#7F7F7F", arrowhead=none];
+  U [label="Utilidad\nCitaSalud Arequipa", fillcolor="#1A3A5C", fontcolor="white", color="#1A3A5C", fontsize=13];
+  node [fillcolor="#C8310E", fontcolor="white", color="#C8310E"];
+  R [label="Rendimiento"]; D [label="Disponibilidad"]; S [label="Seguridad"]; M [label="Modificabilidad"];
+  node [fillcolor="#F4CCC3", fontcolor="black", color="#C8310E"];
+  R1 [label="Latencia en el\npico de las 7:00"]; D1 [label="Caída del servicio\nde DNI"]; D2 [label="Caída de WhatsApp"];
+  S1 [label="Aislamiento entre\nestablecimientos"]; S2 [label="Datos personales"];
+  M1 [label="Nuevo establecimiento"]; M2 [label="Nuevo canal de aviso"];
+  node [fillcolor="#F7F7F7", color="#9A9A9A", fontcolor="black", width=6.4, fontsize=10.5];
+  Q1 [label="(H,M) QA-01: 360 req/s a las 7:00 (8x el pico actual) → p95 de disponibilidad ≤ 1 s"];
+  Q2 [label="(H,H) QA-02: el servicio de DNI cae 30 min → 0 reservas perdidas y p95 de reservar ≤ 2 s"];
+  Q3 [label="(M,M) QA-03: WhatsApp cae 1 h → 100 % de recordatorios se envían al volver, sin duplicados"];
+  Q4 [label="(H,M) QA-04: personal del establecimiento A nunca ve citas del establecimiento B (0 fugas)"];
+  Q5 [label="(M,L) QA-05: datos personales cifrados en tránsito y en reposo (Ley 29733)"];
+  Q6 [label="(M,M) QA-06: alta de un establecimiento en ≤ 1 día, sin desplegar código"];
+  Q7 [label="(M,L) QA-07: nuevo canal de aviso (SMS) en ≤ 2 días-persona (puerto Notificador)"];
+  U -> {R D S M}; R -> R1 -> Q1; D -> D1 -> Q2; D -> D2 -> Q3; S -> S1 -> Q4; S -> S2 -> Q5; M -> M1 -> Q6; M -> M2 -> Q7;
+}
