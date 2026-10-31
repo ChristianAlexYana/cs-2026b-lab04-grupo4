@@ -1,6 +1,6 @@
 # Bitácora de uso de IA — CitaSalud Arequipa
 
-> **Nota del grupo:** todas las entradas corresponden a interacciones con Claude durante el laboratorio. Las entradas 1 y 2 documentan la evaluación de alternativas arquitectónicas (E2); las entradas 3 a 8 registran la generación de los demás entregables, con nuestras verificaciones y correcciones para garantizar el cumplimiento de las restricciones del proyecto.
+> **Nota del grupo:** todas las entradas corresponden a interacciones con la IA durante los laboratorios. Las entradas 1 y 2 documentan la evaluación de alternativas arquitectónicas; las entradas 3 a 8 registran la generación de los demás entregables iniciales, con nuestras verificaciones y correcciones. Las entradas 9 y 10 corresponden a la evaluación ATAM-lite y las iteraciones de ADD del Laboratorio 08.
 
 | # | Fecha | Herramienta | Prompt (resumen) | Qué propuso la IA | Qué verificamos o corregimos | Decisión |
 |---|-------|-------------|------------------|-------------------|------------------------------|----------|
@@ -11,12 +11,16 @@
 | 5 | 30/09 | Claude | Generar `arquitectura.mmd` a partir de la matriz | Diagrama Mermaid con 3 actores, 5 módulos, PostgreSQL, Redis y WhatsApp | Al validar en mermaid.live apareció primero un diagrama distinto porque el editor conservaba código anterior; se limpió el editor y se comprobó el diagrama correcto. Se revisó que cada módulo cubra al menos un RF de `drivers.md`. | Aceptada |
 | 6 | 30/09 | Claude | Generar `alternativa.puml` de la segunda mejor alternativa (capas, 4,10) | Diagrama PlantUML de componentes con nota de 4 líneas que cita el puntaje | Al revisar la imagen de plantuml.com se vio PostgreSQL fuera del servidor, lo que contradice la vista de despliegue (un solo VPS, R-03). Se movió la base de datos dentro del nodo, se regeneró la imagen y se subió al repositorio mediante un Pull Request revisado por otro integrante. | Corregida |
 | 7 | 30/09 | Claude | Generar `despliegue.py` (E6) con Python Diagrams | Primera versión casi idéntica al ejemplo del docente; luego se agregaron Gunicorn y Prometheus para diferenciarla | El grupo detectó que Gunicorn, Prometheus y Grafana no figuraban en ninguna decisión ni ADR. Se eliminaron Gunicorn y Prometheus; el monitoreo quedó rotulado "herramienta por definir" y el ícono de Grafana se mantiene solo como representación genérica. Los diagramas deben ser coherentes con los ADR. | Corregida |
-| 8 | 30/09 | Claude | Redactar ADR-004 de stack tecnológico y revisar ADR-002 | Django + DRF y React/Angular (PWA). En el ADR-002 afirmó que MySQL no tiene índices parciales nativos | Verificamos en la documentación oficial de MySQL (`CREATE INDEX` y columnas generadas) que no hay índices parciales nativos y que sí se puede usar `UNIQUE` sobre columnas generadas. En Django, `UniqueConstraint(condition=...)` existe [3]. Con eso se completó el ADR-002 con las referencias [1]–[3] y se retiró el marcador "[Verificar…]". Confirmamos PostgreSQL y el stack definido en el ADR-004. | Corregida |
+| 8 | 30/09 | Claude | Redactar ADR-004 de stack tecnológico y revisar ADR-002 | Django + DRF y React/Angular (PWA). En el ADR-002 afirmó que MySQL no tiene índices parciales nativos | Verificamos en la documentación oficial de MySQL (`CREATE INDEX` y columnas generadas) que no hay índices parciales nativos y que sí se puede usar `UNIQUE` sobre columnas generadas. En Django, `UniqueConstraint(condition=...)` existe. Con eso se completó el ADR-002 y se retiró el marcador "[Verificar…]". Confirmamos PostgreSQL y el stack definido en el ADR-004. | Corregida |
+| 9 | 31/10 | Gemini / Claude | **Evaluador adversario (Prompt IA 3)**: Evaluar iteraciones de ADD y código del otro grupo (Lab 08). | Sugirió 2 riesgos y 1 punto de sensibilidad relacionados a cuellos de botella por falta de timeout y contención en su base de datos. | Se verificó leyendo el documento `iteracion-1.md` del otro grupo que no habían contemplado adecuadamente el límite del pool de conexiones en el pico de las 7:00 a.m. | Se abrió el Issue ATAM-lite con estos hallazgos. |
+| 10 | 31/10 | Gemini / Claude | **Tácticas para aislamiento multi-tenant**: Buscar alternativas seguras ante vulnerabilidades (QA-03). | Recomendó de inmediato migrar a microservicios distribuidos o usar 40 bases de datos físicas separadas para cada centro. | Evaluado contra `drivers.md`. Esta propuesta excede el presupuesto (1 solo VPS) y el tiempo estipulado para el MVP (1 mes) para 3 developers. | **Falso positivo refutado.** Se rechazó la arquitectura distribuida; se optó por RLS en el monolito. |
+
+> No se incluyó información personal ni confidencial en ningún prompt.
 
 ## Anexo: prompts
 
 **Prompt 1 (entrada 1)**
-```
+```text
 Actúa como arquitecto de software senior con experiencia en sistemas de salud pública pequeños.
 Contexto: plataforma "CitaSalud Arequipa" para reservar citas en centros de salud de la región.
 Los pacientes buscan disponibilidad por especialidad y reservan/cancelan citas; el sistema envía
@@ -33,14 +37,24 @@ No inventes APIs ni capacidades de servicios; si no estás seguro, indícalo.
 ```
 
 **Prompt 2 (entrada 2)**
-```
+```text
 Ahora actúa como "abogado del diablo". Critica duramente la alternativa que recomendaste:
 ¿qué supuestos no se cumplen con nuestras restricciones?, ¿qué podría fallar en producción?,
 ¿qué costo oculto tiene? Enumera los 5 riesgos más graves y, para cada uno, una táctica
 arquitectónica de mitigación.
 ```
 
-**Mensajes enviados a Claude en las entradas 3 a 8 (citados de la conversación)**
+**Prompt IA 3 (entrada 9)**
+```text
+Actúa como evaluador ATAM escéptico. Te paso el árbol de utilidad, las iteraciones de ADD, la vista
+de contenedores y los resultados de las simulaciones del otro grupo.
+Para cada escenario (H,*) identifica: puntos de sensibilidad, puntos de trade-off, riesgos y no
+riesgos. Para cada riesgo indica probabilidad e impacto (1 a 5) y una pregunta incómoda que el
+equipo debería poder responder.
+No propongas rediseños completos; cita la evidencia que falta.
+```
+
+**Mensajes enviados a la IA en las entradas 3 a 8**
 - Entrada 3: "el caso elegido es el citaSaludArequipa"; "somos 3 personas, manejamos django, postgresql, mysql, angular, node.js, react, python, java, c++, c, vuejs"; "con respecto al cálculo de referencia, me dice verificar, ¿cómo hago eso? ¿debo crear la aplicación?"
 - Entrada 4: "ahora pasamos al E2"
 - Entrada 5: "ahora E3"; después se pegó la imagen obtenida en mermaid.live para comprobarla.
