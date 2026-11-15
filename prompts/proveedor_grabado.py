@@ -18,7 +18,8 @@ def _version(prompt: str) -> str:
 def call_api(prompt, options, context):
     version = _version(prompt)
     caso = context["vars"]["id"]
-    archivo = RAIZ / "criterios" / "grabaciones" / version / f"{caso}.txt"
+    tarea = "datos-prueba" if caso.startswith("B") else "criterios"
+    archivo = RAIZ / tarea / "grabaciones" / version / f"{caso}.txt"
     if not archivo.exists():
         return {"error": f"Falta la grabacion {version}/{caso}.txt"}
     return {"output": archivo.read_text(encoding="utf-8")}

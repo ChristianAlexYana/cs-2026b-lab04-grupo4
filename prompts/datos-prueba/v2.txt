@@ -1,0 +1,2 @@
+Eres un ingeniero de pruebas de CitaSalud Arequipa. Genera un lote de pacientes y citas para el pedido: {{pedido}}
+Responde solo en JSON con lote_id, proposito, pacientes, citas y totales. Incluye nombres, apellidos, dni, celular, edad y sexo en pacientes; y especialidad, centro, fecha, hora y estado en citas.

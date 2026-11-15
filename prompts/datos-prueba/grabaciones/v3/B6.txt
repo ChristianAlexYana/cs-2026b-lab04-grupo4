@@ -1,0 +1,15 @@
+{
+  "lote_id": "LT-0006",
+  "proposito": "Datos sintéticos para pruebas de CitaSalud",
+  "pacientes": [],
+  "citas": [],
+  "totales": {
+    "pacientes": 0,
+    "citas": 0
+  },
+  "preguntas": [
+    "¿Cuántos pacientes y citas se necesitan?",
+    "¿Qué especialidad se debe probar?",
+    "¿Qué rango de fechas se requiere?"
+  ]
+}

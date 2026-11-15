@@ -1,0 +1,29 @@
+{
+  "historia_id": "H8",
+  "invest_ok": true,
+  "preguntas": [],
+  "escenarios": [
+    {
+      "titulo": "Filtro por distrito",
+      "tipo": "exito",
+      "dado": [
+        "hay cupos en dos distritos"
+      ],
+      "cuando": "filtro los cupos por un distrito",
+      "entonces": [
+        "veo solo los cupos del distrito elegido"
+      ]
+    },
+    {
+      "titulo": "Distrito sin cupos",
+      "tipo": "borde",
+      "dado": [
+        "el distrito elegido no tiene cupos"
+      ],
+      "cuando": "aplico el filtro por distrito",
+      "entonces": [
+        "veo un mensaje que indica que no hay cupos disponibles"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+description: "Lab 09 - Tarea B: datos sintéticos de CitaSalud Arequipa"
+
+prompts:
+  - file://v1.txt
+  - file://v2.txt
+  - file://v3.txt
+
+providers:
+  - id: file://../proveedor_grabado.py
+    label: asistente-grabado
+
+defaultTest:
+  assert:
+    - type: is-json
+      value: file://esquema-promptfoo.json
+      metric: B1_contrato
+
+    - type: javascript
+      metric: B2_dni_ficticio
+      value: |
+        try {
+          const r=JSON.parse(output); return r.pacientes.every(p=>p.es_ficticio===true && /^(FICTICIO-[0-9]{4}|999[0-9]{5})$/.test(p.dni)); } catch { return false; }
+
+    - type: javascript
+      metric: B3_integridad
+      value: |
+        try {
+          const r=JSON.parse(output), ids=new Set(r.pacientes.map(p=>p.paciente_id));
+          return r.totales.pacientes===r.pacientes.length && r.totales.citas===r.citas.length
+            && r.citas.every(c=>ids.has(c.paciente_id) && c.es_ficticio===true);
+        } catch { return false; }
+
+    - type: javascript
+      metric: B4_sin_datos_reales
+      value: |
+        try {
+          const r=JSON.parse(output);
+          return r.pacientes.every(p=>p.nombres.startsWith('Paciente') && p.apellidos.includes('Ficticio') && /^999[0-9]{6}$/.test(p.celular))
+            && !/\+?51\s?9[0-9]{8}/.test(output);
+        } catch { return false; }
+
+    - type: javascript
+      metric: B6_fechas_coherentes
+      value: |
+        try {
+          const r=JSON.parse(output), hoy=new Date(); hoy.setUTCHours(0,0,0,0);
+          const limite=new Date(hoy); limite.setUTCDate(limite.getUTCDate()+30);
+          return r.citas.every(c=>{ const f=new Date(c.fecha+'T00:00:00Z'); return f>=hoy && f<=limite && /^(0[7-9]|1[0-8]):[0-5][0-9]$/.test(c.hora); });
+        } catch { return false; }
+
+tests: file://casos.yaml

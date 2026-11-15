@@ -1,0 +1,29 @@
+{
+  "historia_id": "H3",
+  "invest_ok": true,
+  "preguntas": [],
+  "escenarios": [
+    {
+      "titulo": "Cupos encontrados",
+      "tipo": "exito",
+      "dado": [
+        "hay tres cupos de pediatría en el centro elegido"
+      ],
+      "cuando": "busco cupos por especialidad y centro",
+      "entonces": [
+        "veo los tres horarios disponibles"
+      ]
+    },
+    {
+      "titulo": "Sin cupos",
+      "tipo": "borde",
+      "dado": [
+        "no hay cupos en el centro elegido"
+      ],
+      "cuando": "busco cupos por especialidad y centro",
+      "entonces": [
+        "veo un mensaje sin horarios inventados y una sugerencia de otro centro"
+      ]
+    }
+  ]
+}

@@ -1,7 +1,10 @@
 description: "Lab 09 - Tarea A: criterios de aceptacion (CitaSalud Arequipa)"
 
 prompts:
-  - file://v1.txt            # Bloque 1: solo la linea base; v2, v3 y v3.1 se agregan en el bloque 2
+  - file://v1.txt
+  - file://v2.txt
+  - file://v3.txt
+  - file://v3.1.txt
 
 providers:
   - id: file://../proveedor_grabado.py   # respuestas grabadas; reemplazable por un modelo real
@@ -10,7 +13,7 @@ providers:
 defaultTest:
   assert:
     - type: is-json                      # A1: la salida cumple el contrato
-      value: file://esquema.json
+      value: file://esquema-promptfoo.json  # mismas reglas; sin $schema para AJV de promptfoo 0.125.1
       metric: A1_contrato_json
 
     - type: javascript                   # A2: exito + (error o borde)

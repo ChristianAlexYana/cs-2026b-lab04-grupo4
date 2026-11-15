@@ -1,0 +1,9 @@
+{
+  "historia_id": "H6",
+  "invest_ok": false,
+  "preguntas": [
+    "¿Qué operación debe ser rápida y cuál es el tiempo máximo aceptable?",
+    "¿Qué tarea debe ser fácil de usar y cómo mediremos esa facilidad?"
+  ],
+  "escenarios": []
+}
