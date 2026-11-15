@@ -43,7 +43,7 @@ defaultTest:
       metric: B6_fechas_coherentes
       value: |
         try {
-          const r=JSON.parse(output), hoy=new Date(); hoy.setUTCHours(0,0,0,0);
+          const r=JSON.parse(output), hoy=process.env.FECHA_REFERENCIA ? new Date(process.env.FECHA_REFERENCIA+'T00:00:00Z') : new Date(); hoy.setUTCHours(0,0,0,0);
           const limite=new Date(hoy); limite.setUTCDate(limite.getUTCDate()+30);
           return r.citas.every(c=>{ const f=new Date(c.fecha+'T00:00:00Z'); return f>=hoy && f<=limite && /^(0[7-9]|1[0-8]):[0-5][0-9]$/.test(c.hora); });
         } catch { return false; }

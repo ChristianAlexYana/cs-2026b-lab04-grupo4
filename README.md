@@ -231,3 +231,28 @@ Linea base de la Tarea A (criterios de aceptacion), evaluada con promptfoo y el 
 | v1      | prompt ingenuo, una sola frase | 0 % (0 de 8 casos) |
 
 Detalle de la v1 por asercion: A1 0/8, A2 0/8, A3 7/8, A4 0/2, A5 1/1, A6 8/8, A7 8/8.
+
+## Prompt engineering (Lab 09)
+Los prompts se tratan como código: versionados en `prompts/`, con contrato JSON Schema, evaluados con promptfoo y comprobados en cada Pull Request (`.github/workflows/prompts.yml`). Las grabaciones son simuladas, no respuestas de un LLM en vivo.
+
+| Tarea | Versión | Aprobados | Tasa |
+|-------|---------|-----------|------|
+| A criterios | v1 | 0/8 | 0 % |
+| A criterios | v2 | 3/8 | 37,5 % |
+| A criterios | v3 | 7/8 | 87,5 % |
+| A criterios | v3.1 | 8/8 | 100 % |
+| B datos de prueba | v1 | 0/8 | 0 % |
+| B datos de prueba | v2 | 3/8 | 37,5 % |
+| B datos de prueba | v3 | 7/8 | 87,5 % |
+
+![Tasa de aprobación por versión](prompts/criterios/resultados.png)
+
+- Generador integrado (E6): `src/reservas/generador_datos_prueba.py`, detrás de `ProveedorLLM`; valida con el esquema, rechaza DNI de formato real y comprueba la integridad del lote.
+- Red teaming: `prompts/seguridad/red-team.md` distingue las pruebas con grabaciones de los ensayos simulados.
+- Bitácora y no determinismo: `prompts/bitacora-ia.md`.
+
+**Lecciones aprendidas**
+- Cada versión debe atacar un fallo concreto; la tasa sube porque el contrato y las reglas se hicieron explícitos.
+- El contrato en el esquema se cumple aunque el modelo cambie de redacción; el texto del prompt no lo garantiza.
+- El "antes" reproducible del ataque H8 es v2/H8 (devuelve APROBADO); el "después" es v3.1/H8.
+- Las fechas de las grabaciones caducan: en CI se evalúan contra `FECHA_REFERENCIA` (día de la grabación), sin tocar las respuestas.
