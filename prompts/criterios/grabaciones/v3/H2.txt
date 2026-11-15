@@ -1,0 +1,29 @@
+{
+  "historia_id": "H2",
+  "invest_ok": true,
+  "preguntas": [],
+  "escenarios": [
+    {
+      "titulo": "Cancelación válida",
+      "tipo": "exito",
+      "dado": [
+        "tengo una cita reservada para mañana"
+      ],
+      "cuando": "cancelo mi cita",
+      "entonces": [
+        "veo la cancelación confirmada y el cupo vuelve a estar disponible"
+      ]
+    },
+    {
+      "titulo": "Cita atendida",
+      "tipo": "error",
+      "dado": [
+        "tengo una cita que ya fue atendida"
+      ],
+      "cuando": "intento cancelarla",
+      "entonces": [
+        "veo que la cita atendida no se puede cancelar"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+```json
+{
+  "historia_id": "H5",
+  "invest_ok": true,
+  "preguntas": [],
+  "escenarios": [
+    {
+      "titulo": "Agenda del día",
+      "tipo": "exito",
+      "dado": [
+        "tengo dos pacientes citados hoy a las 08:00 y 09:00"
+      ],
+      "cuando": "consulto mi agenda del día",
+      "entonces": [
+        "veo mis dos citas ordenadas por hora, sin citas de otros médicos"
+      ]
+    },
+    {
+      "titulo": "Día sin citas",
+      "tipo": "borde",
+      "dado": [
+        "no tengo citas asignadas hoy"
+      ],
+      "cuando": "consulto mi agenda del día",
+      "entonces": [
+        "veo un mensaje que indica que no hay citas para hoy"
+      ]
+    }
+  ]
+}
+```

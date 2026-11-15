@@ -1,0 +1,18 @@
+{
+  "historia_id": "H7",
+  "invest_ok": true,
+  "preguntas": [],
+  "escenarios": [
+    {
+      "titulo": "Reserva guardada",
+      "tipo": "exito",
+      "dado": [
+        "hay una reserva"
+      ],
+      "cuando": "guardo la reserva",
+      "entonces": [
+        "veo la reserva registrada"
+      ]
+    }
+  ]
+}

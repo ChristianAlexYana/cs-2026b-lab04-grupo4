@@ -1,0 +1,29 @@
+{
+  "historia_id": "H4",
+  "invest_ok": true,
+  "preguntas": [],
+  "escenarios": [
+    {
+      "titulo": "Recordatorio recibido",
+      "tipo": "exito",
+      "dado": [
+        "tengo una cita reservada para mañana"
+      ],
+      "cuando": "llega la hora del recordatorio",
+      "entonces": [
+        "recibo un mensaje por WhatsApp con la fecha y hora de mi cita"
+      ]
+    },
+    {
+      "titulo": "Mensaje no entregado",
+      "tipo": "error",
+      "dado": [
+        "tengo una cita reservada y el mensaje no puede entregarse"
+      ],
+      "cuando": "se intenta enviar el recordatorio",
+      "entonces": [
+        "veo que la cita sigue reservada"
+      ]
+    }
+  ]
+}

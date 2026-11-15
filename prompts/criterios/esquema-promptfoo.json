@@ -1,0 +1,95 @@
+{
+  "title": "CriteriosAceptacionCitaSalud",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "historia_id",
+    "invest_ok",
+    "preguntas",
+    "escenarios"
+  ],
+  "properties": {
+    "historia_id": {
+      "type": "string",
+      "minLength": 2
+    },
+    "invest_ok": {
+      "type": "boolean"
+    },
+    "preguntas": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 10
+      }
+    },
+    "escenarios": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "titulo",
+          "tipo",
+          "dado",
+          "cuando",
+          "entonces"
+        ],
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "minLength": 5
+          },
+          "tipo": {
+            "enum": [
+              "exito",
+              "error",
+              "borde"
+            ]
+          },
+          "dado": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "cuando": {
+            "type": "string",
+            "minLength": 5
+          },
+          "entonces": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "invest_ok": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "preguntas": {
+            "minItems": 1
+          },
+          "escenarios": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

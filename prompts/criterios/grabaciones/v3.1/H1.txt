@@ -1,0 +1,29 @@
+{
+  "historia_id": "H1",
+  "invest_ok": true,
+  "preguntas": [],
+  "escenarios": [
+    {
+      "titulo": "Reserva confirmada",
+      "tipo": "exito",
+      "dado": [
+        "hay un cupo libre de medicina general a las 09:00"
+      ],
+      "cuando": "reservo el cupo",
+      "entonces": [
+        "veo la cita confirmada y el cupo deja de estar disponible"
+      ]
+    },
+    {
+      "titulo": "Cupo ocupado",
+      "tipo": "error",
+      "dado": [
+        "otro paciente reserva ese cupo antes de mi confirmación"
+      ],
+      "cuando": "intento confirmar la reserva",
+      "entonces": [
+        "veo que el cupo ya no está disponible"
+      ]
+    }
+  ]
+}
