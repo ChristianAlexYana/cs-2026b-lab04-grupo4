@@ -1,0 +1,10 @@
+{
+  "lote_id": "LT-0004",
+  "proposito": "Datos sintéticos para pruebas de CitaSalud",
+  "pacientes": [],
+  "citas": [],
+  "totales": {
+    "pacientes": 0,
+    "citas": 0
+  }
+}

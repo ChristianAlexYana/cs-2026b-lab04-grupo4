@@ -1,0 +1,112 @@
+{
+  "lote_id": "LT-0003",
+  "proposito": "Datos sintéticos para pruebas de CitaSalud",
+  "pacientes": [
+    {
+      "paciente_id": "P-0001",
+      "nombres": "Paciente",
+      "apellidos": "Ficticio 001",
+      "dni": "FICTICIO-0001",
+      "es_ficticio": true,
+      "celular": "999000001",
+      "edad": 21,
+      "sexo": "M"
+    },
+    {
+      "paciente_id": "P-0002",
+      "nombres": "Paciente",
+      "apellidos": "Ficticio 002",
+      "dni": "FICTICIO-0002",
+      "es_ficticio": true,
+      "celular": "999000002",
+      "edad": 22,
+      "sexo": "X"
+    },
+    {
+      "paciente_id": "P-0003",
+      "nombres": "Paciente",
+      "apellidos": "Ficticio 003",
+      "dni": "FICTICIO-0003",
+      "es_ficticio": true,
+      "celular": "999000003",
+      "edad": 23,
+      "sexo": "F"
+    },
+    {
+      "paciente_id": "P-0004",
+      "nombres": "Paciente",
+      "apellidos": "Ficticio 004",
+      "dni": "FICTICIO-0004",
+      "es_ficticio": true,
+      "celular": "999000004",
+      "edad": 24,
+      "sexo": "M"
+    },
+    {
+      "paciente_id": "P-0005",
+      "nombres": "Paciente",
+      "apellidos": "Ficticio 005",
+      "dni": "FICTICIO-0005",
+      "es_ficticio": true,
+      "celular": "999000005",
+      "edad": 25,
+      "sexo": "X"
+    }
+  ],
+  "citas": [
+    {
+      "cita_id": "C-0001",
+      "paciente_id": "P-0001",
+      "especialidad": "Medicina General",
+      "centro": "Centro de Salud Ficticio 01",
+      "fecha": "2026-11-19",
+      "hora": "08:00",
+      "estado": "RESERVADA",
+      "es_ficticio": true
+    },
+    {
+      "cita_id": "C-0002",
+      "paciente_id": "P-0002",
+      "especialidad": "Medicina General",
+      "centro": "Centro de Salud Ficticio 01",
+      "fecha": "2026-11-19",
+      "hora": "08:00",
+      "estado": "RESERVADA",
+      "es_ficticio": true
+    },
+    {
+      "cita_id": "C-0003",
+      "paciente_id": "P-0003",
+      "especialidad": "Medicina General",
+      "centro": "Centro de Salud Ficticio 01",
+      "fecha": "2026-11-19",
+      "hora": "08:00",
+      "estado": "RESERVADA",
+      "es_ficticio": true
+    },
+    {
+      "cita_id": "C-0004",
+      "paciente_id": "P-0004",
+      "especialidad": "Medicina General",
+      "centro": "Centro de Salud Ficticio 01",
+      "fecha": "2026-11-19",
+      "hora": "08:00",
+      "estado": "RESERVADA",
+      "es_ficticio": true
+    },
+    {
+      "cita_id": "C-0005",
+      "paciente_id": "P-0005",
+      "especialidad": "Medicina General",
+      "centro": "Centro de Salud Ficticio 01",
+      "fecha": "2026-11-19",
+      "hora": "08:00",
+      "estado": "RESERVADA",
+      "es_ficticio": true
+    }
+  ],
+  "totales": {
+    "pacientes": 5,
+    "citas": 5
+  }
+}

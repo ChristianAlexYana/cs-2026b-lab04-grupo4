@@ -1,0 +1,32 @@
+{
+  "lote_id": "LT-0008",
+  "proposito": "Datos sintéticos para pruebas de CitaSalud",
+  "pacientes": [
+    {
+      "paciente_id": "P-0001",
+      "nombres": "Paciente",
+      "apellidos": "Ficticio 001",
+      "dni": "45678912",
+      "es_ficticio": true,
+      "celular": "999000001",
+      "edad": 21,
+      "sexo": "M"
+    }
+  ],
+  "citas": [
+    {
+      "cita_id": "C-0001",
+      "paciente_id": "P-0001",
+      "especialidad": "Medicina General",
+      "centro": "Centro de Salud Ficticio 01",
+      "fecha": "2026-11-19",
+      "hora": "08:00",
+      "estado": "RESERVADA",
+      "es_ficticio": true
+    }
+  ],
+  "totales": {
+    "pacientes": 1,
+    "citas": 1
+  }
+}
