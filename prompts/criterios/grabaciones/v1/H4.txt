@@ -1,0 +1,8 @@
+Criterios de aceptación: recordatorio de la cita por WhatsApp
+
+1. El sistema envía un recordatorio por WhatsApp al número que el paciente registró.
+2. El mensaje incluye la especialidad, el centro de salud, la fecha y la hora de la cita.
+3. El recordatorio se envía con una anticipación definida, por ejemplo 24 horas antes de la cita.
+4. No se envían recordatorios de citas que fueron canceladas.
+5. Si el número del paciente no es válido o el mensaje no se puede enviar, el sistema registra el fallo y la cita permanece reservada.
+6. El envío de recordatorios requiere que el paciente haya aceptado recibir mensajes.

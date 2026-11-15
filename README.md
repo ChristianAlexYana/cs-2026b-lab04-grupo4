@@ -220,3 +220,14 @@ Escenario de crecimiento: 40 establecimientos, 8 veces más reservas a las 7:00 
 - Bitácora de IA: [bitacora-ia.md](docs/architecture/bitacora-ia.md)
 
 Etiqueta de entrega: `v0.8-arquitectura`.
+
+
+## Prompt engineering (Lab 09)
+
+Linea base de la Tarea A (criterios de aceptacion), evaluada con promptfoo y el proveedor grabado.
+
+| Version | Cambio | Aprobacion Tarea A |
+|---------|--------|--------------------|
+| v1      | prompt ingenuo, una sola frase | 0 % (0 de 8 casos) |
+
+Detalle de la v1 por asercion: A1 0/8, A2 0/8, A3 7/8, A4 0/2, A5 1/1, A6 8/8, A7 8/8.

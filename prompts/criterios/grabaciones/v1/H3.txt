@@ -1,0 +1,9 @@
+Criterios de aceptación: buscar cupos por especialidad y centro de salud
+
+1. El paciente puede elegir una especialidad y un centro de salud como filtros de búsqueda.
+2. El sistema muestra la lista de cupos disponibles con su fecha y hora, ordenados del más próximo al más lejano.
+3. Solo se muestran cupos realmente disponibles; los ya reservados no aparecen.
+4. Si no hay cupos para la combinación elegida, se muestra un mensaje claro y se sugiere probar otro centro de salud u otra fecha.
+5. Al cambiar un filtro, los resultados se actualizan sin que el paciente pierda el otro filtro seleccionado.
+6. La búsqueda responde en un tiempo menor a 3 segundos en condiciones normales de uso.
+7. Desde un resultado, el paciente puede pasar directamente a reservar ese cupo.

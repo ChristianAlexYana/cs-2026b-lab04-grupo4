@@ -1,0 +1,10 @@
+Criterios de aceptación: base de datos PostgreSQL normalizada para las reservas
+
+1. El esquema cumple al menos la tercera forma normal (3FN): no hay datos repetidos ni dependencias transitivas.
+2. Existen tablas separadas para pacientes, médicos, especialidades, centros de salud, cupos y citas, cada una con su clave primaria.
+3. Las relaciones entre tablas se definen con claves foráneas y se aplica integridad referencial.
+4. No es posible registrar una cita asociada a un paciente o a un cupo que no existe.
+5. Un cupo solo puede tener una cita activa a la vez, garantizado con una restricción de unicidad.
+6. Las consultas más frecuentes, como la disponibilidad por especialidad y centro, cuentan con índices adecuados.
+7. Los cambios al esquema se gestionan con scripts de migración versionados.
+8. La consulta de cupos disponibles responde en menos de 200 ms con el volumen de datos esperado.
