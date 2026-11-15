@@ -1,0 +1,9 @@
+Criterios de aceptación: reservar una cita
+
+1. El paciente puede seleccionar una especialidad y un centro de salud antes de reservar.
+2. El sistema muestra únicamente los cupos disponibles para esa especialidad y ese centro de salud.
+3. Al elegir un cupo y confirmar, el sistema registra la cita y muestra una confirmación con la especialidad, el centro, la fecha y la hora.
+4. Una vez reservada la cita, el cupo deja de aparecer como disponible para otros pacientes.
+5. Si otro paciente ocupa el cupo antes de que se confirme la reserva, el sistema informa que el cupo ya no está disponible y permite elegir otro.
+6. El paciente puede completar la reserva sin presentarse físicamente en el centro de salud.
+7. Después de reservar, el paciente puede consultar los datos de su cita.

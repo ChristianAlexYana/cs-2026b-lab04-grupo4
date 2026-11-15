@@ -1,0 +1,14 @@
+Criterios de aceptación: "Que el sistema sea rápido y fácil de usar"
+
+La historia es muy general, así que propongo criterios medibles para poder verificarla. Conviene que el Product Owner confirme los valores.
+
+Rapidez
+1. Las pantallas principales cargan en menos de 3 segundos con una conexión móvil estándar.
+2. La búsqueda de cupos y la reserva de una cita responden en menos de 2 segundos en condiciones normales de uso.
+
+Facilidad de uso
+3. Un paciente que usa el sistema por primera vez puede reservar una cita sin ayuda en menos de 3 minutos.
+4. Reservar una cita requiere 4 pasos o menos desde la pantalla de inicio.
+5. Los mensajes de error indican qué ocurrió y qué puede hacer el paciente.
+6. El sistema se puede usar desde un celular sin necesidad de ampliar la pantalla.
+7. En una prueba con usuarios, al menos el 80 % califica la experiencia como "fácil" o "muy fácil".

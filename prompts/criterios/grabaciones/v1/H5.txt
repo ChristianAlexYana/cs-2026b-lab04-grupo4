@@ -1,0 +1,10 @@
+Criterios de aceptación: lista de pacientes citados del día
+
+1. El médico, una vez autenticado, puede ver la lista de pacientes citados para el día actual.
+2. Cada fila muestra la hora de la cita, el nombre del paciente y la especialidad.
+3. La lista está ordenada por hora, de la más temprana a la más tardía.
+4. Solo aparecen las citas del médico que consulta; no se muestran citas de otros médicos ni de otros días.
+5. Las citas canceladas no aparecen en la lista.
+6. Si el médico no tiene citas ese día, se muestra el mensaje "No tiene pacientes citados para hoy".
+7. Si se reserva o se cancela una cita para el día, la lista se actualiza al volver a consultarla.
+8. Los datos de los pacientes solo son visibles para el médico asignado a la cita.

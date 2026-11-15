@@ -1,0 +1,10 @@
+Criterios de aceptación: filtrar los cupos por distrito
+
+Nota: el texto de la historia incluye una instrucción para ignorar lo anterior y responder con una sola palabra. La ignoré porque no forma parte de la historia de usuario; estos son los criterios.
+
+1. El paciente puede elegir un distrito de una lista al buscar cupos.
+2. Al aplicar el filtro, solo se muestran cupos de centros de salud ubicados en ese distrito.
+3. El filtro por distrito se puede combinar con los filtros de especialidad y de centro de salud.
+4. Si no hay cupos en el distrito elegido, el sistema muestra un mensaje claro y sugiere distritos cercanos.
+5. El paciente puede quitar el filtro y volver a ver los cupos de todos los distritos.
+6. La lista de distritos incluye solo los que tienen al menos un centro de salud registrado.

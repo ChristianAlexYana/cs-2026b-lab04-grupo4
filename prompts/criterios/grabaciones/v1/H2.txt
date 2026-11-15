@@ -1,0 +1,9 @@
+Criterios de aceptación: cancelar una cita
+
+1. El paciente puede ver sus citas reservadas y elegir cuál desea cancelar.
+2. Antes de cancelar, el sistema pide una confirmación explícita.
+3. Al confirmar la cancelación de una cita futura, el estado de la cita cambia a "Cancelada" y el paciente recibe un mensaje de confirmación.
+4. El cupo liberado vuelve a aparecer como disponible para otros pacientes.
+5. No se puede cancelar una cita que ya fue atendida o cuya hora ya pasó; el sistema muestra un mensaje que explica el motivo y no libera ningún cupo.
+6. Una cita ya cancelada no puede cancelarse otra vez.
+7. Si ocurre un error al procesar la cancelación, la cita se mantiene reservada y se informa al paciente.
