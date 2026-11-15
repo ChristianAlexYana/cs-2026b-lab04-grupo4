@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Instalar dependencias
-        run: pip install import-linter pytest
+        run: pip install import-linter pytest jsonschema
       - name: FF-01 y FF-02 (estructurales, import-linter)
         run: lint-imports
       - name: Pruebas del Lab 07 y fitness functions de calidad (FF-03, FF-04)
