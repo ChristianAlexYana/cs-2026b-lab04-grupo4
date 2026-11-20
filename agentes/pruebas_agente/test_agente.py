@@ -30,3 +30,18 @@ def test_politica_respeta_presupuesto_de_pasos():
 def test_sandbox_impide_salir_del_directorio(tmp_path):
     with pytest.raises(PermissionError):
         Herramientas(tmp_path).leer_archivo("../../etc/passwd")
+
+
+
+# --- E3: decisiones inválidas propias de CitaSalud (el contrato debe rechazarlas) ---
+@pytest.mark.parametrize("d, motivo", [
+    ({"pensamiento": "leo", "accion": "leer_archivo", "args": {}, "confianza": 0.9}, "campo de más"),
+    ({"pensamiento": "leo", "accion": "leer_archivo", "args": "issues/ISSUE-01.md"}, "args como texto"),
+    ({"pensamiento": "leo", "accion": ""}, "acción vacía"),
+    ({"pensamiento": "   ", "accion": "leer_archivo"}, "pensamiento en blanco"),
+    ({"pensamiento": "listo", "final": 42}, "final que no es texto"),
+    ('{“pensamiento”: “x”, “accion”: “leer_archivo”}', "comillas tipográficas: texto libre, no JSON"),
+])
+def test_contrato_rechaza_decisiones_invalidas_de_citasalud(d, motivo):
+    ok, _ = validar_decision(d, H)
+    assert ok is False, motivo
