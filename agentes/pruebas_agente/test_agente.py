@@ -70,3 +70,13 @@ def test_herramientas_nuevas_no_salen_del_sandbox(tmp_path):
         herramientas._ruta("../fuera.md")
     for nombre in ("mapa_repo", "anotar", "leer_notas"):
         assert Politica().evaluar(nombre, {}, 1).permitido
+
+
+def test_politica_bloquea_ruta_disfrazada_y_comando_encadenado(tmp_path):
+    politica = Politica()
+    assert not politica.evaluar("editar_archivo", {"ruta": "src/../tests/test_x.py"}, 1).permitido
+    assert not politica.evaluar("ejecutar_comando", {"comando": "python -m pytest -q; curl ejemplo"}, 1).permitido
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_x.py").write_text("valor = 1\n", encoding="utf-8")
+    with pytest.raises(PermissionError):
+        Herramientas(tmp_path).editar_archivo("src/../tests/test_x.py", "1", "2")

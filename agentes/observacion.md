@@ -30,7 +30,8 @@ también los dígitos Unicode; el ejecutor validó ocho dígitos ASCII en
 `DniAdapter` y el revisor comprobó el diff y la suite. Aprobó en la primera
 ronda y no pidió cambios. Una prueba de regresión añadida por el humano confirma
 la diferencia: `"１２３４５６７８".isdigit()` es verdadero y esa entrada debe rechazarse.
-Con el cambio aprobado aplicado al repositorio, `pytest -q` da 73 aprobadas.
+Con el cambio aprobado aplicado al repositorio, `pytest -q` da 74 aprobadas
+(incluida una prueba adicional de la política).
 
 El bucle actor–crítico agregó una acción (6 frente a 5) y 3 232 caracteres de
 contexto (7 613 frente a 4 381). En esta corrida, el planificador identificó

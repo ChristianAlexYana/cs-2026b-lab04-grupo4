@@ -1,5 +1,6 @@
 """Guardrails: qué puede hacer el agente, cuántas veces y con qué aprobación."""
 import re
+from pathlib import PurePath
 from dataclasses import dataclass, field
 
 
@@ -26,11 +27,15 @@ class Politica:
             return Decision(False, f"Herramienta no permitida: {accion}")
         if accion == "ejecutar_comando":
             cmd = args.get("comando", "")
-            if not any(re.search(p, cmd) for p in self.comandos_permitidos):
+            if (not isinstance(cmd, str) or any(c in cmd for c in ";|&`$><\n\r")
+                    or not any(re.search(p, cmd) for p in self.comandos_permitidos)):
                 return Decision(False, f"Comando fuera de la lista permitida: {cmd!r}")
         if accion == "editar_archivo":
             ruta = args.get("ruta", "")
-            if ruta.startswith(self.rutas_protegidas):
+            if (not isinstance(ruta, str) or PurePath(ruta).is_absolute()
+                    or ".." in PurePath(ruta).parts
+                    or any(PurePath(ruta).parts[:1] == (protegida.strip("/"),)
+                           for protegida in self.rutas_protegidas)):
                 return Decision(False, f"Ruta protegida: {ruta}")
             if self.aprobar_edicion and not self.aprobar_edicion(args):
                 return Decision(False, "El revisor humano rechazó la edición")

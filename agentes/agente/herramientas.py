@@ -3,6 +3,7 @@ Todas operan DENTRO del directorio de trabajo (sandbox)."""
 import ast
 import pathlib
 import re
+import shlex
 import subprocess
 import sys
 
@@ -90,6 +91,8 @@ class Herramientas:
 
     def editar_archivo(self, ruta, antes, despues):
         p = self._ruta(ruta)
+        if p.relative_to(self.raiz).parts[:1] == ("tests",):
+            raise PermissionError(f"Ruta protegida: {ruta}")
         texto = p.read_text(encoding="utf-8")
         if texto.count(antes) != 1:
             return f"ERROR: el fragmento aparece {texto.count(antes)} veces; debe aparecer exactamente 1"
@@ -110,5 +113,8 @@ class Herramientas:
         return (self.raiz / ruta).resolve()
 
     def ejecutar_comando(self, comando):
-        r = subprocess.run(comando, shell=True, cwd=self.raiz, capture_output=True, text=True, timeout=60)
+        argumentos = shlex.split(comando)
+        if argumentos[:1] == ["python"]:
+            argumentos[0] = sys.executable
+        r = subprocess.run(argumentos, cwd=self.raiz, capture_output=True, text=True, timeout=60)
         return (r.stdout + r.stderr).strip()[-2000:]
