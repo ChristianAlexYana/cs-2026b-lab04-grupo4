@@ -5,12 +5,12 @@ Con ModeloInteractivo la consola imprime el contexto; cópielo en su asistente, 
 y la decisión queda grabada en agentes/trayectorias/<etiqueta>/ejecutor.json.
 E6: agregue --aprobar para que usted apruebe o rechace cada edición (s/n).
 """
-from comun import argumentos, preparar_trabajo, modelo, traza, objetivo_issue, politica_ejecutor
+from comun import PROTOCOLO, argumentos, preparar_trabajo, modelo, traza, objetivo_issue, politica_ejecutor
 from agente.nucleo import Agente
 
 args = argumentos(__doc__)
 h = preparar_trabajo()
-contexto = f"{objetivo_issue(args.issue)}\nHerramientas disponibles: {h.catalogo()}"
+contexto = f"{objetivo_issue(args.issue)}\n{PROTOCOLO}\nHerramientas disponibles: {h.catalogo()}"
 ejecutor = Agente("ejecutor", modelo(args, "ejecutor"), h, politica_ejecutor(args, 15), contexto, traza(args, "ejecutor"))
 print(f"\nRESPUESTA FINAL: {ejecutor.ejecutar()}")
 n = len(str(ejecutor.historial))

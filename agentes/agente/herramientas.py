@@ -1,6 +1,10 @@
 """Herramientas del agente. Cada una es una función pequeña, con descripción y parámetros explícitos.
 Todas operan DENTRO del directorio de trabajo (sandbox)."""
-import pathlib, subprocess, re
+import ast
+import pathlib
+import re
+import subprocess
+import sys
 
 
 class Herramientas:
@@ -24,6 +28,9 @@ class Herramientas:
             "editar_archivo": "editar_archivo(ruta, antes, despues): reemplaza un fragmento exacto (una sola vez)",
             "ver_cambios": "ver_cambios(): muestra el diff respecto de la versión original",
             "ejecutar_comando": "ejecutar_comando(comando): ejecuta un comando de shell (sujeto a la política)",
+            "mapa_repo": "mapa_repo(): lista módulos Python y firmas de funciones sin leer sus cuerpos",
+            "anotar": "anotar(texto): guarda una nota breve en notas.md dentro del sandbox",
+            "leer_notas": "leer_notas(): devuelve las notas de esta corrida",
         }
 
     # --- herramientas ---
@@ -44,8 +51,38 @@ class Herramientas:
                     hallazgos.append(f"{p.relative_to(self.raiz)}:{i}: {l.strip()}")
         return "\n".join(hallazgos) or "(sin resultados)"
 
+    def mapa_repo(self):
+        salida = []
+        for p in sorted(self.raiz.rglob("*.py")):
+            if "__pycache__" in p.parts:
+                continue
+            arbol = ast.parse(p.read_text(encoding="utf-8"), filename=str(p))
+            firmas = []
+            for nodo in ast.walk(arbol):
+                if isinstance(nodo, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    argumentos = [a.arg for a in nodo.args.posonlyargs + nodo.args.args + nodo.args.kwonlyargs]
+                    if nodo.args.vararg:
+                        argumentos.append("*" + nodo.args.vararg.arg)
+                    if nodo.args.kwarg:
+                        argumentos.append("**" + nodo.args.kwarg.arg)
+                    firmas.append(f"  def {nodo.name}({', '.join(argumentos)})")
+            salida.append("\n".join([str(p.relative_to(self.raiz)), *firmas]))
+        return "\n".join(salida)
+
+    def anotar(self, texto):
+        if not isinstance(texto, str) or not texto.strip() or "\n" in texto or len(texto) > 300:
+            return "ERROR: la nota debe ser una sola línea de 1 a 300 caracteres"
+        p = self._ruta("notas.md")
+        with p.open("a", encoding="utf-8") as archivo:
+            archivo.write(f"- {texto.strip()}\n")
+        return "OK: nota guardada"
+
+    def leer_notas(self):
+        p = self._ruta("notas.md")
+        return p.read_text(encoding="utf-8") if p.exists() else "(sin notas)"
+
     def ejecutar_pruebas(self):
-        r = subprocess.run(["python", "-m", "pytest", "-q", "--no-header", "-p", "no:cacheprovider"],
+        r = subprocess.run([sys.executable, "-m", "pytest", "-q", "--no-header", "-p", "no:cacheprovider"],
                            cwd=self.raiz, capture_output=True, text=True, timeout=120)
         salida = (r.stdout + r.stderr).strip().splitlines()
         fallos = [l for l in salida if l.startswith(("FAILED", "E "))][:6]

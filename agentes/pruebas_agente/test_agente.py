@@ -45,3 +45,28 @@ def test_sandbox_impide_salir_del_directorio(tmp_path):
 def test_contrato_rechaza_decisiones_invalidas_de_citasalud(d, motivo):
     ok, _ = validar_decision(d, H)
     assert ok is False, motivo
+
+
+def test_mapa_repo_muestra_firmas_sin_cuerpos(tmp_path):
+    (tmp_path / "modulo.py").write_text("def reserva(dni: str):\n    secreto = 'no mostrar'\n    return dni\n", encoding="utf-8")
+    mapa = Herramientas(tmp_path).mapa_repo()
+    assert "modulo.py" in mapa
+    assert "def reserva(dni)" in mapa
+    assert "no mostrar" not in mapa
+
+
+def test_notas_persisten_dentro_del_sandbox(tmp_path):
+    herramientas = Herramientas(tmp_path)
+    assert herramientas.leer_notas() == "(sin notas)"
+    assert herramientas.anotar("Revisar eventos.py") == "OK: nota guardada"
+    assert herramientas.leer_notas() == "- Revisar eventos.py\n"
+    assert (tmp_path / "notas.md").read_text(encoding="utf-8") == herramientas.leer_notas()
+    assert herramientas.anotar("a\nb").startswith("ERROR")
+
+
+def test_herramientas_nuevas_no_salen_del_sandbox(tmp_path):
+    herramientas = Herramientas(tmp_path)
+    with pytest.raises(PermissionError):
+        herramientas._ruta("../fuera.md")
+    for nombre in ("mapa_repo", "anotar", "leer_notas"):
+        assert Politica().evaluar(nombre, {}, 1).permitido

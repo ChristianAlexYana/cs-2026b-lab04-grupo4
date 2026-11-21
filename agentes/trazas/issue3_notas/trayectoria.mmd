@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    actor U as Humano
+    participant PL as Planificador
+    participant EJ as Ejecutor (actor)
+    participant RV as Revisor (crítico)
+    participant P as Política
+    participant H as Herramientas
+    PL->>EJ: plan
+    EJ->>H: ejecutar_pruebas
+    H-->>EJ: 4 failed, 50 passed in 0.19s
+    EJ->>H: mapa_repo
+    H-->>EJ:   def grabacion(tarea, ve
+    EJ->>H: anotar
+    H-->>EJ: OK: nota guardada
+    EJ->>H: leer_archivo
+    H-->>EJ: contenido de eventos.py
+    EJ->>H: leer_notas
+    H-->>EJ: - Issue 3: revisar NotificadorWhatsApp.a
+    EJ->>H: editar_archivo
+    H-->>EJ: OK, archivo modificado
+    EJ->>H: ejecutar_pruebas
+    H-->>EJ: 4 failed, 50 passed in 0.18s
+    EJ->>H: editar_archivo
+    H-->>EJ: OK, archivo modificado
+    EJ->>H: ejecutar_pruebas
+    H-->>EJ: 3 failed, 51 passed in 0.18s

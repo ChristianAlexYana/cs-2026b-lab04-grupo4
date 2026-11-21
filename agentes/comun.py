@@ -8,6 +8,10 @@ from agente.herramientas import Herramientas       # noqa: E402
 from agente.modelos import ModeloGrabado, ModeloInteractivo   # noqa: E402
 
 COPIAR = ("src", "tests", "issues", "prompts", "fitness", ".importlinter")   # lo que el agente ve
+PROTOCOLO = ('Responde con UN objeto JSON en UNA línea: '
+             '{"pensamiento":"...","accion":"<herramienta>","args":{...}} '
+             'o {"pensamiento":"...","final":"<respuesta>"}. '
+             'Usa accion o final, nunca ambos; espera la observación antes de decidir de nuevo.')
 
 
 def argumentos(descripcion):

@@ -42,7 +42,11 @@ class ModeloInteractivo:
         print("\n===== COPIE ESTO EN SU ASISTENTE DE IA =====")
         print(historial[0]["content"] if len(historial) == 1 else historial[-1]["content"])
         print("===== PEGUE LA RESPUESTA JSON (una línea) =====")
-        d = json.loads(input("> "))
+        texto = input("> ")
+        try:
+            d = json.loads(texto)
+        except json.JSONDecodeError:
+            d = texto  # el contrato registra el rechazo y el agente puede continuar
         self._decisiones.append(d)
         json.dump(self._decisiones, open(self._archivo, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         return d
