@@ -1,0 +1,1 @@
+- Issue 3: revisar NotificadorWhatsApp.actualizar en src/reservas/eventos.py; prueba tests/test_issue_03.py.

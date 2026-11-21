@@ -1,0 +1,32 @@
+[
+ {
+  "pensamiento": "Reproduzco los fallos antes de editar.",
+  "accion": "ejecutar_pruebas",
+  "args": {}
+ },
+ {
+  "pensamiento": "Leo el adaptador que define el límite de entrada del DNI.",
+  "accion": "leer_archivo",
+  "args": {
+   "ruta": "src/reservas/adaptadores.py"
+  }
+ },
+ {
+  "pensamiento": "Valido en el adaptador antes de llamar al SDK; ASCII evita dígitos Unicode que no son DNI peruano.",
+  "accion": "editar_archivo",
+  "args": {
+   "ruta": "src/reservas/adaptadores.py",
+   "antes": "    def validar_dni(self, dni: str) -> bool:\n        codigo, datos = self.sdk.consultar(dni)\n        return codigo == 200 and datos.get(\"valido\", False)",
+   "despues": "    def validar_dni(self, dni: str) -> bool:\n        if not (isinstance(dni, str) and len(dni) == 8 and dni.isascii() and dni.isdigit()):\n            return False\n        codigo, datos = self.sdk.consultar(dni)\n        return codigo == 200 and datos.get(\"valido\", False)"
+  }
+ },
+ {
+  "pensamiento": "Verifico la suite completa de la copia.",
+  "accion": "ejecutar_pruebas",
+  "args": {}
+ },
+ {
+  "pensamiento": "El cambio está acotado al adaptador y pasa la suite; entrego al revisor.",
+  "final": "Implementé validación de DNI de ocho dígitos ASCII en DniAdapter antes de consultar al SDK. La copia tiene 54 pruebas aprobadas; revisar el diff y los casos límite."
+ }
+]

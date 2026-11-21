@@ -1,0 +1,36 @@
+@startuml estados
+title Bucle del agente de CitaSalud como máquina de estados (agente/nucleo.py)
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #EEF1FA
+  BorderColor #3B4A6B
+}
+
+[*] --> Decidiendo : objetivo recibido
+
+state Decidiendo : el modelo propone\npensamiento + acción
+state ValidandoContrato : ¿cumple el protocolo JSON?
+state EvaluandoPolitica : herramienta, comando y ruta permitidos\n(tests/ protegida)
+state Ejecutando : herramienta real sobre la copia\nde trabajo
+state Observando : se agrega al historial
+state Finalizado #E8F3E8
+state LimiteAlcanzado #F4CCC4
+
+Decidiendo --> ValidandoContrato : decisión JSON
+ValidandoContrato --> Decidiendo : [inválida] / CONTRATO_INVALIDO
+ValidandoContrato --> Finalizado : [es "final"]
+ValidandoContrato --> EvaluandoPolitica : [es "accion"]
+EvaluandoPolitica --> Decidiendo : [denegada] / BLOQUEADO
+EvaluandoPolitica --> LimiteAlcanzado : [paso > max_pasos (15)]
+EvaluandoPolitica --> Ejecutando : [permitida]
+Ejecutando --> Observando : resultado o error
+Observando --> Decidiendo : observación al historial
+Finalizado --> [*] : respuesta final
+LimiteAlcanzado --> [*] : sin respuesta
+
+note right of EvaluandoPolitica
+  Caso CitaSalud, issue 1:
+  ver_cambios fue BLOQUEADO
+  (herramienta no permitida al ejecutor)
+end note
+@enduml
