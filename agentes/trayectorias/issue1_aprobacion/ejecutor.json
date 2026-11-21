@@ -1,0 +1,67 @@
+[
+ {
+  "pensamiento": "Primero necesito conocer el problema descrito en el issue, así que leo issues/ISSUE-01.md.",
+  "accion": "leer_archivo",
+  "args": {
+   "ruta": "issues/ISSUE-01.md"
+  }
+ },
+ {
+  "pensamiento": "El issue señala src/reservas/despues/servicio.py (reservar_cita y _asegurar_cupo). Leo ese archivo para entender cómo se asigna el cupo.",
+  "accion": "leer_archivo",
+  "args": {
+   "ruta": "src/reservas/despues/servicio.py"
+  }
+ },
+ {
+  "pensamiento": "El cupo en cupos_db nunca se consume: _asegurar_cupo retorna si hay cupo pero no lo marca como ocupado, por eso dos reservas pasan. Antes de editar quiero ver cómo la política MISMO_MEDICO usa cupos_db y qué espera la prueba, así que leo tests/test_issue_01.py.",
+  "accion": "leer_archivo",
+  "args": {
+   "ruta": "tests/test_issue_01.py"
+  }
+ },
+ {
+  "pensamiento": "La prueba reserva dos veces Medicina General con MISMO_MEDICO y espera que la segunda falle con 'No hay cupos alternativos'. Debo consumir el cupo tras una reserva exitosa, pero antes quiero ver cómo MISMO_MEDICO usa cupos_db, así que leo src/reservas/politicas.py.",
+  "accion": "leer_archivo",
+  "args": {
+   "ruta": "src/reservas/politicas.py"
+  }
+ },
+ {
+  "pensamiento": "MISMO_MEDICO siempre devuelve False, así que si el cupo se marca como ocupado tras la primera reserva, la segunda caerá en 'No hay cupos alternativos'. El arreglo mínimo está en reservar_cita: tras asegurar el cupo, marcar cupos_db[cita.especialidad] = False solo si había cupo directo. Para no alterar el comportamiento de la política PRONTO (que siempre encuentra alternativo), consumo el cupo únicamente cuando existía en cupos_db, después de validar y antes de publicar.",
+  "accion": "editar_archivo",
+  "args": {
+   "ruta": "src/reservas/despues/servicio.py",
+   "antes": "        cita.cupo_ocupado = True\n        cita.estado = contexto.estado_actual.nombre",
+   "despues": "        if self.cupos_db.get(cita.especialidad, False):\n            self.cupos_db[cita.especialidad] = False\n        cita.cupo_ocupado = True\n        cita.estado = contexto.estado_actual.nombre"
+  }
+ },
+ {
+  "pensamiento": "La edición se aplicó. Ahora ejecuto las pruebas para confirmar que test_issue_01 pasa y que no se rompió ninguna otra prueba.",
+  "accion": "ejecutar_pruebas",
+  "args": {}
+ },
+ {
+  "pensamiento": "Fallan 4 pruebas y el resumen no dice cuáles son. Necesito saber si test_issue_01 sigue fallando o si mi cambio rompió otras, y si esos fallos ya existían antes (podrían ser de otros issues). Ejecuto pytest con lista de fallos para identificarlas.",
+  "accion": "ejecutar_comando",
+  "args": {
+   "comando": "python -m pytest -q --tb=short -rf"
+  }
+ },
+ {
+  "pensamiento": "Los 4 fallos son de test_issue_02 (validación de DNI) y test_issue_03 (recordatorio a cita cancelada), que corresponden a otros issues. test_issue_01 ya no aparece entre los fallos, así que pasa con mi cambio. Reviso el diff para confirmar que solo modifiqué lo necesario y no toqué tests/.",
+  "accion": "ver_cambios",
+  "args": {}
+ },
+ {
+  "pensamiento": "ver_cambios está bloqueada, pero no es imprescindible. Ya sé qué edité (solo src/reservas/despues/servicio.py) y no toqué tests/. Para confirmar el resultado leo el archivo modificado y verifico que el cambio quedó como esperaba.",
+  "accion": "leer_archivo",
+  "args": {
+   "ruta": "src/reservas/despues/servicio.py"
+  }
+ },
+ {
+  "pensamiento": "El cambio quedó aplicado en las líneas 64-65 de servicio.py. En la ejecución anterior test_issue_01 no aparece entre los 4 fallos (todos de test_issue_02 y test_issue_03, que son otros issues), así que mi cambio lo resuelve sin romper nada más. No toqué tests/. Doy por terminado el issue.",
+  "final": "ISSUE-01 resuelto. En src/reservas/despues/servicio.py, reservar_cita ahora marca el cupo como ocupado (cupos_db[especialidad] = False) tras una reserva exitosa cuando existía un cupo directo. Así la segunda reserva de 'Medicina General' con MISMO_MEDICO cae en la política, que no encuentra alternativas, y lanza ValueError('No hay cupos alternativos'). test_issue_01 ya no figura entre los fallos: la última ejecución mostró 50 pruebas pasando y 4 fallando, y esas 4 corresponden a otros issues (3 de test_issue_02 sobre DNI de ocho caracteres no numéricos y 1 de test_issue_03 sobre recordatorios a citas canceladas), no a este cambio. No edité nada en tests/. Nota: no pude ejecutar ver_cambios por la política, así que verifiqué el cambio leyendo el archivo."
+ }
+]
