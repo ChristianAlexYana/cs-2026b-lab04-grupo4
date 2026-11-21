@@ -20,5 +20,7 @@ class DniAdapter(ValidadorIdentidad):
         self.sdk = sdk
         
     def validar_dni(self, dni: str) -> bool:
+        if not (isinstance(dni, str) and len(dni) == 8 and dni.isascii() and dni.isdigit()):
+            return False
         codigo, datos = self.sdk.consultar(dni)
         return codigo == 200 and datos.get("valido", False)

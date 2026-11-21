@@ -28,7 +28,7 @@ class NotificadorWhatsApp(Suscriptor):
         self._notificador = notificador
 
     def actualizar(self, evento: str, cita) -> None:
-        if evento == "CITA_RESERVADA":
+        if evento == "CITA_RESERVADA" and getattr(cita, "estado", None) != "CANCELADA":
             self._notificador.programar_recordatorio(cita)
 
 

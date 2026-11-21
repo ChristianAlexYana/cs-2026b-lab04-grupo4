@@ -1,0 +1,6 @@
+[
+ {
+  "pensamiento": "Divido la investigación y la validación; el ejecutor tocará la copia y el revisor inspeccionará el diff y las pruebas.",
+  "final": "Reproduce tests/test_issue_02.py, lee el issue y el límite de validación, corrige solo código de producción, ejecuta pytest y entrega el cambio al revisor. El revisor comprobará también casos de caracteres numéricos no ASCII."
+ }
+]

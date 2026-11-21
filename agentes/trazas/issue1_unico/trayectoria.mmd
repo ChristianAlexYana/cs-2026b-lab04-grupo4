@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    actor U as Humano
+    participant PL as Planificador
+    participant EJ as Ejecutor (actor)
+    participant RV as Revisor (crítico)
+    participant P as Política
+    participant H as Herramientas
+    PL->>EJ: plan
+    EJ->>H: leer_archivo
+    H-->>EJ: contenido de ISSUE-01.md
+    EJ->>H: leer_archivo
+    H-->>EJ: contenido de servicio.py
+    EJ->>H: leer_archivo
+    H-->>EJ: contenido de test_issue_01.py
+    EJ->>H: leer_archivo
+    H-->>EJ: contenido de politicas.py
+    EJ->>H: editar_archivo
+    H-->>EJ: OK, archivo modificado
+    EJ->>H: ejecutar_pruebas
+    H-->>EJ: 4 failed, 50 passed in 1.13s
+    EJ->>H: ejecutar_comando
+    H-->>EJ: tests\test_issue_02.py:11: in test_issue
+    EJ-xP: ver_cambios
+    P--xEJ: BLOQUEADO
+    EJ->>H: leer_archivo
+    H-->>EJ: contenido de servicio.py

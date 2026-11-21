@@ -61,6 +61,8 @@ class ServicioReservasDespues:
             raise ValueError("DNI inválido")
         self._asegurar_cupo(cita.especialidad, politica_alternativos)
 
+        if self.cupos_db.get(cita.especialidad, False):
+            self.cupos_db[cita.especialidad] = False
         cita.cupo_ocupado = True
         cita.estado = contexto.estado_actual.nombre
         try:
