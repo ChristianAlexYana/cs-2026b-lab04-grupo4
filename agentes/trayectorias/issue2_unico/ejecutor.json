@@ -1,0 +1,39 @@
+[
+ {
+  "pensamiento": "Reproduzco el fallo del DNI en la copia antes de editar.",
+  "accion": "ejecutar_pruebas",
+  "args": {}
+ },
+ {
+  "pensamiento": "Leo el issue para precisar el contrato del DNI.",
+  "accion": "leer_archivo",
+  "args": {
+   "ruta": "issues/ISSUE-02.md"
+  }
+ },
+ {
+  "pensamiento": "La pista señala el SDK y el adaptador; leo primero la simulación.",
+  "accion": "leer_archivo",
+  "args": {
+   "ruta": "src/reservas/externos.py"
+  }
+ },
+ {
+  "pensamiento": "El SDK acepta cualquier longitud ocho; agrego comprobación de dígitos.",
+  "accion": "editar_archivo",
+  "args": {
+   "ruta": "src/reservas/externos.py",
+   "antes": "if len(dni) == 8:",
+   "despues": "if len(dni) == 8 and dni.isdigit():"
+  }
+ },
+ {
+  "pensamiento": "Compruebo si las pruebas existentes quedan verdes.",
+  "accion": "ejecutar_pruebas",
+  "args": {}
+ },
+ {
+  "pensamiento": "La suite de la copia pasa; cierro la variante de agente único para compararla con el revisor independiente.",
+  "final": "Issue 2 resuelto en la copia con validación de ocho caracteres y dígitos en ReniecSDK; 54 pruebas aprobadas. Solicito revisión humana antes de aplicar."
+ }
+]

@@ -5,7 +5,7 @@ from src.reservas.antes.servicio import Cita
 from src.reservas.despues.servicio import ServicioReservasDespues
 
 
-@pytest.mark.parametrize("dni", ["ABCDEFGH", "1234567A", "12 45678"])
+@pytest.mark.parametrize("dni", ["ABCDEFGH", "1234567A", "12 45678", "１２３４５６７８"])
 def test_issue_02_dni_de_ocho_caracteres_no_numericos_es_invalido(dni):
     servicio = ServicioReservasDespues()
     with pytest.raises(ValueError, match="DNI inválido"):
