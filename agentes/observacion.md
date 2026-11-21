@@ -1,4 +1,30 @@
-# Observación de las corridas de Renzo (E4 y E5)
+# Observación de las trazas (E7)
+
+Métricas de los tres issues, calculadas con las trazas JSONL de `agentes/trazas/` (pasos, herramientas y bloqueos) y con el contexto que imprime cada runner. «Pasos» son las acciones del agente sin contar la respuesta final.
+
+| Issue | Corrida | Pasos y rondas | Herramientas usadas | Rechazadas por el contrato | Bloqueadas | Contexto final |
+|---|---|---|---|---:|---:|---:|
+| 1 | `issue1_unico` (E2) | 9 pasos, 1 ronda | `leer_archivo` ×5, `editar_archivo`, `ejecutar_pruebas`, `ejecutar_comando`, `ver_cambios` | 0 | 1 (`ver_cambios`, por la política) | 17 675 caracteres |
+| 2 | `issue2_unico` (E5) | 5 pasos, 1 ronda | `ejecutar_pruebas` ×2, `leer_archivo` ×2, `editar_archivo` | 0 | 0 | 4 381 caracteres |
+| 2 | `issue2_actor_critico` (E5) | 6 pasos (ejecutor 4, revisor 2), 1 ronda | `ejecutar_pruebas` ×3, `leer_archivo`, `editar_archivo`, `ver_cambios` | 0 | 0 | 7 613 caracteres entre tres agentes |
+| 3 | `issue3_notas` (E4) | 9 pasos, 1 ronda | `ejecutar_pruebas` ×3, `editar_archivo` ×2, `mapa_repo`, `anotar`, `leer_notas`, `leer_archivo` | 0 | 0 | 16 164 caracteres |
+
+Diagrama de la trayectoria del issue 1 (generado con `python agentes/agente/traza.py agentes/trazas/issue1_unico`):
+
+![Trayectoria del issue 1](trazas/issue1_unico/trayectoria.png)
+
+## Lectura
+
+- **Los tres issues se resolvieron** y la suite quedó en verde (74 pruebas al cerrar E5). Ningún ejecutor editó `tests/`.
+- **El contrato no rechazó ninguna decisión** en las corridas registradas. Las únicas respuestas inválidas (comillas tipográficas) se detectaron antes de pegarlas en la consola, así que no aparecen en las trazas; están en `bitacora-ia.md`.
+- **El contexto depende del issue más que de la técnica:** el issue 1 (leer cuatro archivos) llegó a 17 675 caracteres; el issue 2 con agente único, a 4 381. Por eso no comparamos E2 con E4 como si fueran el mismo problema.
+- **Lo que falta del humano:** el humano pegó cada decisión, aprobó el diff y aplicó el cambio. En ninguna corrida se probó un asistente conectado por API ni inyección indirecta (queda para el Laboratorio 13).
+
+## E6: repetición con aprobación humana
+
+Se repitió la trayectoria grabada del issue 1 sobre el commit `44a5e8b` (las cinco pruebas en rojo) con `--modelo grabado --aprobar`. Con «s» la edición pasa: 9 pasos, 1 bloqueo (`ver_cambios`). Con «n» la política bloquea la edición del paso 5 (`El revisor humano rechazó la edición`): 9 pasos, 2 bloqueos. Es una repetición de decisiones ya grabadas, no una corrida nueva con el asistente. Trazas en `trazas/issue1_aprobacion/` y `trazas/issue1_rechazo/`.
+
+## Detalle de las corridas de E4 y E5
 
 Las decisiones se registraron con `ModeloInteractivo`; cada herramienta operó sobre
 `agentes/trabajo/`, una copia nueva por corrida. El cambio aplicado a `src/` se
