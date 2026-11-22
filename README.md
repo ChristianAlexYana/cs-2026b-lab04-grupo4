@@ -214,7 +214,7 @@ Escenario de crecimiento: 40 establecimientos, 8 veces más reservas a las 7:00 
 | 3 | QA-03: 0 fugas entre establecimientos | RLS en PostgreSQL | Comparación de alternativas (`add/iteracion-3.md`) | Sí |
 
 ### Decisiones y fitness functions
-- ADR: [007 caché](docs/architecture/adr/007-cache-y-control-concurrencia.md) · [008 resiliencia DNI](docs/architecture/adr/008-resiliencia-servicio-dni.md) · [009 RLS](docs/architecture/adr/009-aislamiento-multi-establecimiento-rls.md)
+- ADR: [007 caché](docs/architecture/adr/007-cache-y-control-concurrencia.md) · [008 resiliencia DNI](docs/architecture/adr/008-resiliencia-servicio-dni.md) · [009 RLS](docs/architecture/adr/009-aislamiento-multi-establecimiento-rls.md) · [010 sistema agéntico](docs/architecture/adr/010-sistema-agentico.md)
 - Iteraciones: [1](docs/architecture/add/iteracion-1.md) · [3](docs/architecture/add/iteracion-3.md)
 - Fitness functions (`.importlinter`, `tests/test_fitness.py`) corren en cada Pull Request con GitHub Actions.
 - Bitácora de IA: [bitacora-ia.md](docs/architecture/bitacora-ia.md)
@@ -256,3 +256,30 @@ Los prompts se tratan como código: versionados en `prompts/`, con contrato JSON
 - El contrato en el esquema se cumple aunque el modelo cambie de redacción; el texto del prompt no lo garantiza.
 - El "antes" reproducible del ataque H8 es v2/H8 (devuelve APROBADO); el "después" es v3.1/H8.
 - Las fechas de las grabaciones caducan: en CI se evalúan contra `FECHA_REFERENCIA` (día de la grabación), sin tocar las respuestas.
+
+## Sistemas agénticos (Lab 10)
+Un agente ReAct resuelve tres issues reales de CitaSalud sobre una copia de trabajo, con contrato JSON, política de herramientas (mínimo privilegio, `tests/` protegida, máximo de pasos), traza JSONL y aprobación humana opcional de cada edición (`--aprobar`). Las decisiones las da un asistente de IA pegadas en consola (`ModeloInteractivo`); las herramientas se ejecutan de verdad. Decisión completa en [ADR-010](docs/architecture/adr/010-sistema-agentico.md), lienzo en `agentes/diseno/lienzo.md` y ruta de autonomía en `agentes/delegacion.md`.
+
+**Máquina de estados del agente** (`agentes/diseno/estados.puml`):
+
+![Máquina de estados](agentes/diseno/estados.png)
+
+**Trayectoria del issue 1** (generada con `agentes/agente/traza.py`):
+
+![Trayectoria del issue 1](agentes/trazas/issue1_unico/trayectoria.png)
+
+| Issue | Corrida | Pasos y rondas | Rechazadas por el contrato | Bloqueadas | Contexto final |
+|---|---|---|---:|---:|---:|
+| 1 | agente único | 9 pasos, 1 ronda | 0 | 1 | 17 675 caracteres |
+| 2 | agente único | 5 pasos, 1 ronda | 0 | 0 | 4 381 caracteres |
+| 2 | actor-crítico | 6 pasos, 1 ronda | 0 | 0 | 7 613 caracteres |
+| 3 | único con mapa y notas | 9 pasos, 1 ronda | 0 | 0 | 16 164 caracteres |
+
+Detalle, herramientas por corrida y lectura en [`agentes/observacion.md`](agentes/observacion.md); interacciones con el asistente en [`agentes/bitacora-ia.md`](agentes/bitacora-ia.md).
+
+**Lecciones aprendidas**
+- Las pruebas, el contrato y la política detectaron los errores del agente; la IA no verificó su propio trabajo.
+- Para un cambio acotado, un agente único alcanzó; el revisor extra sumó costo sin hallazgos en el issue 2.
+- Las corridas son pocas y con un solo asistente: sirven para auditar el flujo, no para generalizar tasas de éxito.
+
+Etiqueta de entrega: `v1.0-agentes`.

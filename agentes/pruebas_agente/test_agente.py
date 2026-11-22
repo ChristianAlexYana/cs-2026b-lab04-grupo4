@@ -80,3 +80,32 @@ def test_politica_bloquea_ruta_disfrazada_y_comando_encadenado(tmp_path):
     (tmp_path / "tests" / "test_x.py").write_text("valor = 1\n", encoding="utf-8")
     with pytest.raises(PermissionError):
         Herramientas(tmp_path).editar_archivo("src/../tests/test_x.py", "1", "2")
+
+
+def test_aprobacion_humana_rechazada_bloquea_la_edicion():
+    """E6: con aprobar_edicion activo, un 'n' del humano bloquea la edición y un 's' la deja pasar."""
+    edicion = {"ruta": "src/reservas/x.py", "antes": "a", "despues": "b"}
+    p = Politica()
+    p.aprobar_edicion = lambda args: False
+    d = p.evaluar("editar_archivo", edicion, 1)
+    assert not d.permitido and "rechazó" in d.motivo
+    p.aprobar_edicion = lambda args: True
+    assert p.evaluar("editar_archivo", edicion, 1).permitido
+
+
+def test_aprobacion_humana_no_se_pide_para_lecturas():
+    preguntas = []
+    p = Politica()
+    p.aprobar_edicion = lambda args: preguntas.append(args) or False
+    assert p.evaluar("leer_archivo", {"ruta": "src/a.py"}, 1).permitido
+    assert preguntas == []
+
+
+def test_consola_solo_acepta_s_o_n(monkeypatch, capsys):
+    import comun
+    respuestas = iter(["quizás", "", "S"])
+    monkeypatch.setattr("builtins.input", lambda _="": next(respuestas))
+    assert comun.aprobar_en_consola({"ruta": "src/a.py", "antes": "x", "despues": "y"}) is True
+    respuestas = iter(["si", " N "])
+    monkeypatch.setattr("builtins.input", lambda _="": next(respuestas))
+    assert comun.aprobar_en_consola({"ruta": "src/a.py", "antes": "x", "despues": "y"}) is False
