@@ -1,1 +1,4 @@
 __pycache__/
+.venv/
+/.lab11-local/
+/agentes/mcp/borradores/BORRADOR-*.md

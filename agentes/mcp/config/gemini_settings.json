@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "citasalud": {
+      "command": "./.venv/bin/python",
+      "args": ["agentes/mcp/servidor_mcp/citasalud_mcp.py"]
+    }
+  }
+}
