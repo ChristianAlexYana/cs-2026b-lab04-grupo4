@@ -19,6 +19,8 @@ class Politica:
     rutas_protegidas: tuple = ("tests/",)          # el agente no puede "arreglar" las pruebas para que pasen
     max_pasos: int = 15
     aprobar_edicion = None                          # función opcional: humano en el circuito (human-in-the-loop)
+    requieren_aprobacion: set = field(default_factory=set)   # Lab 11: herramientas (p. ej. MCP de escritura)
+    aprobar = None                                  # función opcional aprobar(accion, args) -> bool
 
     def evaluar(self, accion: str, args: dict, paso: int) -> Decision:
         if paso > self.max_pasos:
@@ -39,4 +41,6 @@ class Politica:
                 return Decision(False, f"Ruta protegida: {ruta}")
             if self.aprobar_edicion and not self.aprobar_edicion(args):
                 return Decision(False, "El revisor humano rechazó la edición")
+        if accion in self.requieren_aprobacion and not (self.aprobar and self.aprobar(accion, args)):
+            return Decision(False, f"{accion} requiere aprobación humana y no fue aprobada")
         return Decision(True)
