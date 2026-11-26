@@ -9,9 +9,9 @@ def cargar(archivo=RAIZ / "trazas/mcp_trafico.jsonl"):
     return [json.loads(l) for l in open(archivo, encoding="utf-8")]
 
 
-def a_mermaid(eventos, aprobar=("registrar_incidencia",)) -> str:
+def a_mermaid(eventos, aprobar=("reservar_cita_borrador",)) -> str:
     l = ["sequenceDiagram", "    autonumber", "    actor U as Humano", "    participant A as Agente (host MCP)",
-         "    participant S as Servidor MCP agroconecta"]
+         "    participant S as Servidor MCP citasalud"]
     pendientes = {}
     for e in eventos:
         m = e["msg"]
