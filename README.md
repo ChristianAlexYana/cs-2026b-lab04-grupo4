@@ -55,6 +55,8 @@ Vista de despliegue (Python Diagrams) y alternativa descartada (PlantUML):
 - [ADR-002: Reserva consistente con PostgreSQL](docs/architecture/adr/002-reserva-consistente-postgresql.md)
 - [ADR-003: Recordatorios asíncronos](docs/architecture/adr/003-recordatorios-asincronos.md)
 - [ADR-004: Stack tecnológico (Django y React)](docs/architecture/adr/004-stack-tecnologico.md)
+- [ADR-010: Sistema agéntico](docs/architecture/adr/010-sistema-agentico.md)
+- [ADR-011: Servidor MCP](docs/architecture/adr/011-servidor-mcp.md)
 
 ## Documentación
 | Entregable | Archivo |
@@ -283,3 +285,57 @@ Detalle, herramientas por corrida y lectura en [`agentes/observacion.md`](agente
 - Las corridas son pocas y con un solo asistente: sirven para auditar el flujo, no para generalizar tasas de éxito.
 
 Etiqueta de entrega: `v1.0-agentes`.
+
+## Servidor MCP (Lab 11)
+CitaSalud publica sus capacidades como un servidor MCP (SDK `mcp==2.3.0`, transporte stdio, protocolo 2026-07-28) para que cualquier host las descubra: VS Code con Copilot, Claude Code, Gemini CLI o el agente del Lab 10. Solo usa datos sintéticos. Decisión en [ADR-011](docs/architecture/adr/011-servidor-mcp.md); catálogo justificado en [`agentes/mcp/diseno/catalogo-mcp.md`](agentes/mcp/diseno/catalogo-mcp.md).
+
+| Capacidad | Primitiva | Escribe |
+|---|---|---|
+| `cupos_disponibles(especialidad)` | Herramienta | No |
+| `citas_del_dia(fecha)` | Herramienta | No (devuelve `SIN_FUENTE`: el dominio no tiene agenda) |
+| `validar_dni(dni)` | Herramienta | No |
+| `reservar_cita_borrador(dni, especialidad, celular)` | Herramienta | Sí: solo crea un `BORRADOR-NN.md` enmascarado, con aprobación humana |
+| `citasalud://reglas-reserva`, `citasalud://agents-md` | Recursos | No |
+| `citasalud://adr/{numero}` (001 a 010) | Plantilla de recurso | No |
+| `resumen_del_dia(fecha)`, `redactar_criterios(id, historia)` | Prompts | No |
+
+**Cómo conectarlo a un host**
+1. `pip install -r agentes/mcp/requirements.txt` (Python 3.10 o superior; mejor en un `.venv`).
+2. Copiar la configuración de [`agentes/mcp/config/`](agentes/mcp/config/LEEME.md): `vscode_mcp.json` como `.vscode/mcp.json`, `claude_code_mcp.json` como `.mcp.json` o `gemini_settings.json` en `.gemini/settings.json`.
+3. Aprobar cada llamada a `reservar_cita_borrador` cuando el host la pida. El uso real en VS Code está en [`agentes/mcp/uso-en-host.md`](agentes/mcp/uso-en-host.md).
+4. Sin host: `python agentes/mcp/cliente/explorar.py` o `python agentes/mcp/agente_mcp.py --etiqueta consulta1`.
+
+**Diagrama de secuencia** de una consulta del agente (`consulta1`; 14 mensajes JSON-RPC, 7 201 bytes):
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as Humano
+    participant A as Agente (host MCP)
+    participant S as Servidor MCP citasalud
+    A->>S: server/discover
+    S-->>A: versiones 2026-07-28 + capacidades
+    A->>S: tools/list
+    S-->>A: 4 herramientas con esquema
+    A->>S: tools/call citas_del_dia
+    S-->>A: resultado (resultType=complete)
+    A->>S: tools/call cupos_disponibles
+    S--xA: error (isError=true)
+    A->>S: tools/call cupos_disponibles
+    S-->>A: resultado (resultType=complete)
+    A->>S: tools/call validar_dni
+    S-->>A: resultado (resultType=complete)
+    A->>U: ¿apruebas reservar_cita_borrador?
+    U-->>A: sí
+    A->>S: tools/call reservar_cita_borrador
+    S-->>A: resultado (resultType=complete)
+```
+
+Resultados: 36 pruebas de contrato y del auditor en `agentes/mcp/pruebas/` (`python -m pytest -q agentes/mcp/pruebas`) y 77 en la suite general (`python -m pytest -q`); `lint-imports` con 2 contratos cumplidos. Protocolo y costo del catálogo en [`agentes/mcp/protocolo.md`](agentes/mcp/protocolo.md), auditoría en [`agentes/mcp/seguridad.md`](agentes/mcp/seguridad.md) y bitácora en [`agentes/mcp/bitacora-ia.md`](agentes/mcp/bitacora-ia.md).
+
+**Lecciones aprendidas**
+- Las descripciones y los errores claros importan más que el volumen: el agente se corrigió solo tras un error de herramienta legible.
+- Las anotaciones del servidor son pistas; la aprobación humana y la auditoría del catálogo siguen siendo necesarias.
+- Optimizar un catálogo ya compacto rinde poco (−1,7 % de caracteres): la fusión de herramientas ahorraría más, pero cuesta pruebas y evidencia.
+
+Etiqueta de entrega: `v1.1-mcp`.
