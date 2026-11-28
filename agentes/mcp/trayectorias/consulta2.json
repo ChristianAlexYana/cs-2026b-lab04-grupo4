@@ -1,0 +1,45 @@
+[
+ {
+  "pensamiento": "Hay que responder dos cosas y condicionar una acción. Empiezo por las citas del 2026-11-23; la herramienta puede devolver SIN_FUENTE, pero debo consultarla antes de afirmar nada. Después consultaré cupos por especialidad y validaré el DNI antes de crear el borrador.",
+  "accion": "citas_del_dia",
+  "args": {
+   "fecha": "2026-11-23"
+  }
+ },
+ "Error: tu respuesta no contiene \"accion\" ni \"final\", y añadiste campos \"valor\" y \"fuente\" que la herramienta no devolvió. La observación real es {\"fecha\": \"2026-11-23\", \"estado\": \"SIN_FUENTE\"}. Responde SOLO con el JSON del siguiente paso: {\"pensamiento\":\"...\",\"accion\":\"<herramienta>\",\"args\":{...}}. Responde dentro de un bloque de código, en una línea.",
+ {
+  "pensamiento": "Las citas canceladas no se pueden responder porque citas_del_dia devolvió SIN_FUENTE. Falta saber qué especialidades tienen cupo directo, así que consulto cupos_disponibles antes de crear cualquier borrador.",
+  "accion": "cupos_disponibles",
+  "args": {
+   "fecha": "2026-11-23"
+  }
+ },
+ {
+  "pensamiento": "cupos_disponibles exige el campo especialidad, que omití. Para decidir si creo el borrador consulto primero Medicina General, y luego revisaré las demás especialidades.",
+  "accion": "cupos_disponibles",
+  "args": {
+   "fecha": "2026-11-23",
+   "especialidad": "Medicina General"
+  }
+ },
+ {
+  "pensamiento": "Medicina General tiene cupo, así que corresponde crear el borrador. Antes de reservar valido el DNI 99900001; después llamaré a reservar_cita_borrador con el celular 999000001.",
+  "accion": "validar_dni",
+  "args": {
+   "dni": "99900001"
+  }
+ },
+ {
+  "pensamiento": "Corrijo la llamada: reservar_cita_borrador solo admite dni, especialidad y celular, así que quito el campo fecha. Medicina General tiene cupo y el DNI 99900001 es válido, por lo que creo el borrador.",
+  "accion": "reservar_cita_borrador",
+  "args": {
+   "dni": "99900001",
+   "especialidad": "Medicina General",
+   "celular": "999000001"
+  }
+ },
+ {
+  "pensamiento": "El borrador se creó como BORRADOR-01.md. De las especialidades solo consulté Medicina General, que tiene cupo; no tengo una lista de las demás y no voy a inventar nombres. Las citas canceladas no se pueden responder porque citas_del_dia devolvió SIN_FUENTE. Cierro informando lo verificado y lo que falta.",
+  "final": "Citas canceladas del 2026-11-23: no puedo responder, la consulta no devolvió fuente (SIN_FUENTE). Cupo directo: solo verifiqué Medicina General y sí tiene cupo; no consulté otras especialidades porque no tengo su lista, indíquemelas si desea revisarlas. Borrador: creé la cita en borrador (BORRADOR-01.md) para el DNI 99900001, ya validado, con celular 999000001 en Medicina General. Queda en borrador, sin confirmar."
+ }
+]
