@@ -73,13 +73,13 @@ def _disponibilidad(especialidad: str) -> bool:
 
 @mcp.tool(title="Consultar disponibilidad por especialidad", annotations=SOLO_LECTURA)
 def cupos_disponibles(especialidad: str) -> CupoDisponible:
-    """Consulta disponibilidad directa por especialidad, sin fecha. Usa Medicina General o Cardiologia."""
+    """Disponibilidad directa por especialidad, sin fecha: Medicina General o Cardiologia."""
     return {"especialidad": especialidad, "disponible": _disponibilidad(especialidad)}
 
 
 @mcp.tool(title="Consultar agenda del día", annotations=SOLO_LECTURA)
 def citas_del_dia(fecha: str) -> ConsultaCitasDelDia:
-    """Consulta una fecha AAAA-MM-DD. Devuelve SIN_FUENTE porque el servicio carece de agenda de atención."""
+    """Agenda de una fecha AAAA-MM-DD. Devuelve SIN_FUENTE: el servicio no tiene agenda de atención."""
     try:
         dia = _fecha(fecha)
     except ValueError as error:
@@ -89,7 +89,7 @@ def citas_del_dia(fecha: str) -> ConsultaCitasDelDia:
 
 @mcp.tool(title="Validar DNI de prueba", annotations=SOLO_LECTURA)
 def validar_dni(dni: str) -> bool:
-    """Valida un DNI sintético de ocho dígitos ASCII con prefijo 999 mediante el adaptador simulado."""
+    """Valida un DNI sintético (8 dígitos ASCII, prefijo 999) con el adaptador simulado."""
     if not re.fullmatch(r"999[0-9]{5}", dni):
         raise ToolError("Usa un DNI sintético de ocho dígitos ASCII con prefijo 999.")
     return servicio.validador.validar_dni(dni)
@@ -97,7 +97,7 @@ def validar_dni(dni: str) -> bool:
 
 @mcp.tool(title="Crear borrador de cita", annotations=ESCRITURA, structured_output=False)
 def reservar_cita_borrador(dni: str, especialidad: str, celular: str) -> str:
-    """Crea un nuevo BORRADOR-NN.md con datos de prueba enmascarados. El host debe aprobar la llamada."""
+    """Crea un BORRADOR-NN.md nuevo con datos de prueba enmascarados. Requiere aprobación del host."""
     if not validar_dni(dni):
         raise ToolError("El adaptador rechazó el DNI de prueba.")
     _disponibilidad(especialidad)

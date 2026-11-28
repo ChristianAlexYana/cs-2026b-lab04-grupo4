@@ -50,6 +50,8 @@ def metricas(eventos) -> dict:
 
 
 if __name__ == "__main__":
-    ev = cargar()
-    (RAIZ / "trazas/mcp_trafico.mmd").write_text(a_mermaid(ev), encoding="utf-8")
+    # uso: python agentes/mcp/cliente/traza_mcp.py agentes/mcp/trazas/<etiqueta>/mcp_trafico.jsonl
+    origen = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else RAIZ / "trazas/mcp_trafico.jsonl"
+    ev = cargar(origen)
+    origen.with_name("trafico.mmd").write_text(a_mermaid(ev), encoding="utf-8")
     print(json.dumps(metricas(ev), ensure_ascii=False, indent=1))
